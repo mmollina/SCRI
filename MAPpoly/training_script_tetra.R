@@ -1,68 +1,74 @@
 require(mappoly)
-
+setwd("~/repos/SCRI_MAPpoly_training/MAPpoly/")
 ## Downloading and reading B2721 fitpolyprobabilistic scores
 setwd("~/repos/SCRI_MAPpoly_training/")
-address <- "https://github.com/mmollina/SCRI_MAPpoly_training/raw/main/data/B2721_scores.zip"
+address <- "https://github.com/mmollina/SCRI/raw/main/data/fitpoly_tetra_call/B2721_scores.zip"
 tempfl <- tempfile(pattern = "B2721_CC_", fileext = ".zip")
 download.file(url = address, destfile = tempfl)
 unzip(tempfl, files = "B2721_scores.dat")
-B2721 <- read_fitpoly(file.in = "B2721_scores.dat", 
-                      ploidy = 4, 
-                      parent1 = "Atlantic", 
-                      parent2 = "B1829", 
-                      verbose = TRUE)
 unlink(tempfl)
+##96 seconds
+dat <- read_fitpoly(file.in = "B2721_scores.dat", 
+                    ploidy = 4, 
+                    parent1 = "Atlantic", 
+                    parent2 = "B1829", 
+                    verbose = TRUE)
 
 ## Including genome position (using S. tuberosum genome v4.03)
-read.csv("https://github.com/mmollina/SCRI_MAPpoly_training/raw/main/data/solcap_snp_pos_V4.03.csv")
-B2721$sequence <- solcap.snp.pos[B2721$mrk.names,"chr"]
-B2721$sequence.pos <- solcap.snp.pos[B2721$mrk.names,"pos"]
-names(B2721$sequence.pos) <- names(B2721$sequence) <- B2721$mrk.names
+solcap.snp.pos <- read.csv("https://github.com/mmollina/SCRI_MAPpoly_training/raw/main/data/solcap_snp_pos_V4.03.csv", row.names = 1)
+dat$sequence <- solcap.snp.pos[dat$mrk.names, "chr"]
+dat$sequence.pos <- solcap.snp.pos[dat$mrk.names,"pos"]
+names(dat$sequence.pos) <- names(dat$sequence) <- dat$mrk.names
 
-
-plot(B2721)
-print(B2721, detailed = TRUE)
-plot_mrk_info(B2721, 37)
-print_mrk(B2721, 37)
-dat <- filter_missing(B2721, type = "marker", filter.thres = 0.05, inter = F)
+plot(dat)
+print(dat, detailed = TRUE)
+plot_mrk_info(dat, 37)
+print_mrk(dat, 37)
+dat <- filter_missing(dat, type = "marker", filter.thres = 0.05, inter = F)
 dat <- filter_missing(dat, type = "individual", filter.thres = 0.025, inter = F)
 plot(dat)
 s <- filter_segregation(dat, chisq.pval.thres = 0.05/dat$n.mrk, inter = F)
 s <- make_seq_mappoly(s)
 plot(s)
 
+plot_mrk_info(dat, 1)
+plot_mrk_info(dat, "solcap_snp_c1_1")
+plot_mrk_info(dat, 10)
+plot_mrk_info(dat, "solcap_snp_c1_10042")
+
 #9.8 minutes in a Intel(R) Xeon(R) CPU E5-2670 v3 @ 2.30GHz (12 cores, 24 threads) and 128 GB RAM
 nc <- parallel::detectCores() - 1
-system.time(tpt <- est_pairwise_rf(s, ncpus = nc))
-plot_mrk_info(B2721, 1)
-plot_mrk_info(B2721, "solcap_snp_c1_1")
-plot_mrk_info(B2721, 10)
-plot_mrk_info(B2721, "solcap_snp_c1_10042")
+tpt <- est_pairwise_rf(s, ncpus = nc)
+#tpt <- readRDS("tpt_6602_mrk.rds")
 tpt$pairwise[1:10]
 tpt$pairwise$`1-10`
 plot(tpt, first.mrk = 1, second.mrk = 10)
 #~1.1 minutes
-m <- rf_list_to_matrix(tpt, ncpus = 24)
-plot(m, ord = rownames(get_genomic_order(s)), fact = 10)
+m <- rf_list_to_matrix(tpt, ncpus = nc)
+#m <- readRDS("m_6602_mrk.rds")
+gen.ord <- get_genomic_order(s)
+s.gen.ord <- make_seq_mappoly(gen.ord)
+plot(m)
+plot(m, ord = s.gen.ord$seq.mrk.names, fact = 10)
 mf <- rf_list_to_matrix(tpt, 
                         thresh.LOD.ph = 5, 
                         thresh.LOD.rf = 5, 
                         thresh.rf = 0.25)
-plot(mf, ord = rownames(get_genomic_order(s)), fact = 10)
+plot(mf, ord = s.gen.ord$seq.mrk.names, fact = 10)
 sf <- rf_snp_filter(input.twopt = tpt, 
                     thresh.LOD.ph = 5, 
                     thresh.LOD.rf = 5, 
                     thresh.rf = 0.25, 
                     probs = c(0.05, 0.95))
-
 mf <- make_mat_mappoly(m, sf)
 
-gr <- group_mappoly(mf, expected.groups = 12, comp.mat = TRUE)
+gr <- group_mappoly(mf, expected.groups = 12, comp.mat = TRUE, inter = FALSE)
 gr
 
 
 a <- match(1:12, as.numeric(colnames(gr$seq.vs.grouped.snp)[-13]))
 L<-vector("list", 12)
+i<-1
 for(i in 1:11){
   s1 <- make_seq_mappoly(gr, arg = a[i], genomic.info = 1)
   tpt1 <- make_pairs_mappoly(tpt, s1)
@@ -77,7 +83,7 @@ for(i in 1:11){
                                                   start.set = 3,
                                                   thres.twopt = 10,
                                                   thres.hmm = 50,
-                                                  extend.tail = 100, #30 for all, except 11
+                                                  extend.tail = 30, #30 for all, except 11
                                                   twopt = tpt1,
                                                   verbose = TRUE,
                                                   tol = 10e-2,
@@ -91,10 +97,10 @@ for(i in 1:11){
   system.time(lg1.geno.map.err <- est_full_hmm_with_global_error(lg1.geno.map, error = 0.05, tol = 10e-4))
   plot(lg1.geno.map.err)
   ##MDS order
-  mds.o1 <- mds_mappoly(m1)
+  mds.o1 <- mds_mappoly(m1, n = c(116,277,212,402))
   plot(mds.o1)
   s1.mds <- make_seq_mappoly(mds.o1)
-  plot(m1, ord = s1.g$seq.mrk.names, fact = 3)
+  plot(m1, ord = s1.g$seq.mrk.names, fact = 2)
   ## 5.1 minutes
   system.time(lg1.mds.map<-est_rf_hmm_sequential(input.seq = s1.mds,
                                                  start.set = 3,
@@ -119,9 +125,18 @@ for(i in 1:11){
            lg1.mds.map.err)
   
   names(L1) <- paste(c("geno", "geno.err", "mds", "mds.err"), i, sep = ".")
-  plot_map_list(L1)
-  plot_genome_vs_map(L1)
-  L[[i]] <- L1
+  
+  
+  id1 <- L1$geno.1$info$mrk.names
+  id2 <- L1$mds.1$info$mrk.names
+  
+  match(id1
+        
+        get_submap(L1$geno.1, mrk.pos = )
+        
+        plot_map_list(L1)
+        plot_genome_vs_map(L1)
+        L[[i]] <- L1
 }
 plot_map_list(lapply(L, function(x) x[[1]]), col = "ggstyle")
 
