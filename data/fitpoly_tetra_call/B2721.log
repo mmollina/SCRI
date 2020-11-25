@@ -1,0 +1,19 @@
+saveMarkerModels started at 20201123-135119
+ploidy = 4
+data frame passed as data = mydata
+sample count in data = 160
+marker count in data = 8303
+marker count to score = 8303
+maxiter = 40
+maxn.bin = 200
+nbin = 200
+sd.threshold = 0.1
+p.threshold = 0.99
+call.threshold = 0.6
+peak.threshold = 0.85
+try.HW = TRUE
+dip.filter = 1
+sd.target = NA
+ncores = 12
+batchsize = 346
+saveMarkerModels finished at 20201123-141743
