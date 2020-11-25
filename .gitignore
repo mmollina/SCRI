@@ -15,7 +15,7 @@
 data/sample*
 
 # fitPoly dat files
-data/fitpoly_tetra_call/*.dat
+*.dat
 
 # User-specific files
 .Ruserdata

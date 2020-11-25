@@ -1,6 +1,8 @@
 require(mappoly)
-setwd("~/repos/SCRI_training/")
-address <- "https://github.com/mmollina/MAPpoly_vignettes/raw/master/data/B2721_scores.zip"
+
+## Downloading and reading B2721 fitpolyprobabilistic scores
+setwd("~/repos/SCRI_MAPpoly_training/")
+address <- "https://github.com/mmollina/SCRI_MAPpoly_training/raw/main/data/B2721_scores.zip"
 tempfl <- tempfile(pattern = "B2721_CC_", fileext = ".zip")
 download.file(url = address, destfile = tempfl)
 unzip(tempfl, files = "B2721_scores.dat")
@@ -11,20 +13,8 @@ B2721 <- read_fitpoly(file.in = "B2721_scores.dat",
                       verbose = TRUE)
 unlink(tempfl)
 
-#### Get potato infinium 8303 sequences ####
-address <- "https://github.com/mmollina/B2721_map/raw/master/cluster_call/potato_8303SNPs_potato_dm_v4.03.gff3"
-tempfl <- tempfile(pattern = "B2721_", fileext = ".gff3")
-download.file(url = address, destfile = tempfl)
-solcap.snp.pos <- ape::read.gff(file = tempfl)
-head(solcap.snp.pos)
-solcap.snp.pos$snp.names <- sapply(strsplit(solcap.snp.pos$attributes, split = ";|="), function(x) x[4])
-solcap.snp.pos <- solcap.snp.pos[order(solcap.snp.pos$snp.names),]
-solcap.snp.pos <- solcap.snp.pos[!duplicated(solcap.snp.pos$snp.names),]
-solcap.snp.pos$ch <- sapply(strsplit(as.character(solcap.snp.pos$seqid), split = "chr"), function(x) as.numeric(x[2]))
-solcap.snp.pos$ch[solcap.snp.pos$ch == 0] <- NA
-solcap.snp.pos <- solcap.snp.pos[order(solcap.snp.pos[,"ch"],solcap.snp.pos[,"start"],decreasing=FALSE),]
-solcap.snp.pos <- data.frame(chr = solcap.snp.pos$ch, pos = solcap.snp.pos$start, row.names = solcap.snp.pos$snp.names)
-head(solcap.snp.pos)
+## Including genome position (using S. tuberosum genome v4.03)
+read.csv("https://github.com/mmollina/SCRI_MAPpoly_training/raw/main/data/solcap_snp_pos_V4.03.csv")
 B2721$sequence <- solcap.snp.pos[B2721$mrk.names,"chr"]
 B2721$sequence.pos <- solcap.snp.pos[B2721$mrk.names,"pos"]
 names(B2721$sequence.pos) <- names(B2721$sequence) <- B2721$mrk.names
