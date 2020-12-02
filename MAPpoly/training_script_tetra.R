@@ -1,7 +1,6 @@
 require(mappoly)
-setwd("~/repos/SCRI_MAPpoly_training/MAPpoly/")
+setwd("~/repos/SCRI/MAPpoly/")
 ## Downloading and reading B2721 fitpolyprobabilistic scores
-setwd("~/repos/SCRI_MAPpoly_training/")
 address <- "https://github.com/mmollina/SCRI/raw/main/data/fitpoly_tetra_call/B2721_scores.zip"
 tempfl <- tempfile(pattern = "B2721_CC_", fileext = ".zip")
 download.file(url = address, destfile = tempfl)
@@ -13,32 +12,29 @@ dat <- read_fitpoly(file.in = "B2721_scores.dat",
                     parent1 = "Atlantic", 
                     parent2 = "B1829", 
                     verbose = TRUE)
-
-## Including genome position (using S. tuberosum genome v4.03)
-solcap.snp.pos <- read.csv("https://github.com/mmollina/SCRI_MAPpoly_training/raw/main/data/solcap_snp_pos_V4.03.csv", row.names = 1)
-dat$sequence <- solcap.snp.pos[dat$mrk.names, "chr"]
-dat$sequence.pos <- solcap.snp.pos[dat$mrk.names,"pos"]
-names(dat$sequence.pos) <- names(dat$sequence) <- dat$mrk.names
-
+## Get genome information
+source("get_solcap_snp_pos.R")
 plot(dat)
 print(dat, detailed = TRUE)
-plot_mrk_info(dat, 37)
-print_mrk(dat, 37)
-dat <- filter_missing(dat, type = "marker", filter.thres = 0.05, inter = F)
-dat <- filter_missing(dat, type = "individual", filter.thres = 0.025, inter = F)
+
+dev.off()
+plot_mrk_info(dat, 738)
+print_mrk(dat, 738)
+plot_mrk_info(dat, "solcap_snp_c1_3722")
+print_mrk(dat, "solcap_snp_c1_3722")
+
+dat <- filter_missing(dat, type = "marker", 
+                      filter.thres = 0.05)
+dat <- filter_missing(input.data = dat, type = "individual", 
+                      filter.thres = 0.025)
 plot(dat)
-s <- filter_segregation(dat, chisq.pval.thres = 0.05/dat$n.mrk, inter = F)
+s <- filter_segregation(input.data = dat, chisq.pval.thres = 0.05/dat$n.mrk)
 s <- make_seq_mappoly(s)
 plot(s)
 
-plot_mrk_info(dat, 1)
-plot_mrk_info(dat, "solcap_snp_c1_1")
-plot_mrk_info(dat, 10)
-plot_mrk_info(dat, "solcap_snp_c1_10042")
-
 #9.8 minutes in a Intel(R) Xeon(R) CPU E5-2670 v3 @ 2.30GHz (12 cores, 24 threads) and 128 GB RAM
 nc <- parallel::detectCores() - 1
-tpt <- est_pairwise_rf(s, ncpus = nc)
+system.time(tpt <- est_pairwise_rf(s, ncpus = nc))
 #tpt <- readRDS("tpt_6602_mrk.rds")
 tpt$pairwise[1:10]
 tpt$pairwise$`1-10`
@@ -48,138 +44,188 @@ m <- rf_list_to_matrix(tpt, ncpus = nc)
 #m <- readRDS("m_6602_mrk.rds")
 gen.ord <- get_genomic_order(s)
 s.gen.ord <- make_seq_mappoly(gen.ord)
-plot(m)
 plot(m, ord = s.gen.ord$seq.mrk.names, fact = 10)
-mf <- rf_list_to_matrix(tpt, 
-                        thresh.LOD.ph = 5, 
-                        thresh.LOD.rf = 5, 
-                        thresh.rf = 0.25)
-plot(mf, ord = s.gen.ord$seq.mrk.names, fact = 10)
 sf <- rf_snp_filter(input.twopt = tpt, 
                     thresh.LOD.ph = 5, 
                     thresh.LOD.rf = 5, 
                     thresh.rf = 0.25, 
                     probs = c(0.05, 0.95))
 mf <- make_mat_mappoly(m, sf)
-
-gr <- group_mappoly(mf, expected.groups = 12, comp.mat = TRUE, inter = FALSE)
+## Grouping
+gr <- group_mappoly(mf, expected.groups = 12, 
+                    comp.mat = TRUE)
 gr
 
-
-a <- match(1:12, as.numeric(colnames(gr$seq.vs.grouped.snp)[-13]))
-L<-vector("list", 12)
-i<-1
-for(i in 1:11){
-  s1 <- make_seq_mappoly(gr, arg = a[i], genomic.info = 1)
-  tpt1 <- make_pairs_mappoly(tpt, s1)
-  m1 <- make_mat_mappoly(m, s1)
-  ##Genomic order
-  g.o1 <- get_genomic_order(s1)
-  s1.g <- make_seq_mappoly(g.o1)
-  plot(g.o1)
-  plot(m1, ord = s1.g$seq.mrk.names, fact = 3)
-  ##3.8 minutes
-  system.time(lg1.geno.map<-est_rf_hmm_sequential(input.seq = s1.g,
-                                                  start.set = 3,
-                                                  thres.twopt = 10,
-                                                  thres.hmm = 50,
-                                                  extend.tail = 30, #30 for all, except 11
-                                                  twopt = tpt1,
-                                                  verbose = TRUE,
-                                                  tol = 10e-2,
-                                                  tol.final = 10e-4,
-                                                  phase.number.limit = 20,
-                                                  sub.map.size.diff.limit = 5,
-                                                  info.tail = TRUE,
-                                                  reestimate.single.ph.configuration = TRUE))
-  plot(lg1.geno.map)
-  ##3.3 minutes
-  system.time(lg1.geno.map.err <- est_full_hmm_with_global_error(lg1.geno.map, error = 0.05, tol = 10e-4))
-  plot(lg1.geno.map.err)
-  ##MDS order
-  mds.o1 <- mds_mappoly(m1, n = c(116,277,212,402))
-  plot(mds.o1)
-  s1.mds <- make_seq_mappoly(mds.o1)
-  plot(m1, ord = s1.g$seq.mrk.names, fact = 2)
-  ## 5.1 minutes
-  system.time(lg1.mds.map<-est_rf_hmm_sequential(input.seq = s1.mds,
-                                                 start.set = 3,
-                                                 thres.twopt = 10,
-                                                 thres.hmm = 50,
-                                                 extend.tail = 30,
-                                                 twopt = tpt1,
-                                                 verbose = TRUE,
-                                                 tol = 10e-2,
-                                                 tol.final = 10e-4,
-                                                 phase.number.limit = 20,
-                                                 sub.map.size.diff.limit = 5,
-                                                 info.tail = TRUE,
-                                                 reestimate.single.ph.configuration = TRUE))
-  plot(lg1.mds.map)
-  ## 2.1 minutes
-  system.time(lg1.mds.map.err <- est_full_hmm_with_global_error(lg1.mds.map, error = 0.05, tol = 10e-4))
-  plot(lg1.mds.map.err)
-  L1<-list(lg1.geno.map, 
-           lg1.geno.map.err, 
-           lg1.mds.map, 
-           lg1.mds.map.err)
-  
-  names(L1) <- paste(c("geno", "geno.err", "mds", "mds.err"), i, sep = ".")
-  
-  
-  id1 <- L1$geno.1$info$mrk.names
-  id2 <- L1$mds.1$info$mrk.names
-  
-  match(id1
-        
-        get_submap(L1$geno.1, mrk.pos = )
-        
-        plot_map_list(L1)
-        plot_genome_vs_map(L1)
-        L[[i]] <- L1
+#### Functions ####
+phasing_and_hmm_rf <- function(X){
+  fl <- paste0("output_map_ch_", X$seq$sequence[1], ".txt")
+  sink(fl)
+  map <- est_rf_hmm_sequential(input.seq = X$seq,
+                               start.set = 3,
+                               thres.twopt = 10,
+                               thres.hmm = 50,
+                               extend.tail = 30,
+                               twopt = X$tpt,
+                               verbose = TRUE,
+                               phase.number.limit = 20,
+                               sub.map.size.diff.limit = 5) 
+  sink()
+  return(map)
 }
-plot_map_list(lapply(L, function(x) x[[1]]), col = "ggstyle")
+error_model <- function(X, error = 0.05, tol = 10e-4){
+  X$maps[[1]]$seq.rf <- rep(0.01,
+                            length(X$maps[[1]]$seq.rf))
+  x <- est_full_hmm_with_global_error(input.map = X, 
+                                      error = error, 
+                                      tol = tol, 
+                                      verbose = FALSE)
+  return(x)
+}
+#### Correspondence with genome
+z<-as.numeric(colnames(gr$seq.vs.grouped.snp)[1:12])
+#### Assembling linkage groups (order based on genome)
+LGS<-vector("list", 12)
+for(ch in 1:12){
+  cat("\n ~~~~~~ ch:", ch, "...\n")
+  lg <- which(z==ch)
+  s.temp<-make_seq_mappoly(gr, lg, genomic.info = 1)
+  tpt.temp <- make_pairs_mappoly(tpt, s.temp)
+  s.temp.filt <- rf_snp_filter(tpt.temp, 5, 5, 0.15, c(0.05, 1))
+  m.temp <- make_mat_mappoly(m, s.temp.filt)
+  g.o <- get_genomic_order(s.temp)
+  s.g <- make_seq_mappoly(g.o)
+  tpt.temp <- make_pairs_mappoly(tpt, input.seq = s.g)
+  LGS[[ch]] <- list(seq = s.g, tpt = tpt.temp)
+}
+#### Parallel map construction
+cl <- parallel::makeCluster(12)
+parallel::clusterEvalQ(cl, require(mappoly))
+parallel::clusterExport(cl, "dat")
+# ~12.5 minutes
+MAPs.geno <- parallel::parLapply(cl, LGS, phasing_and_hmm_rf)
+# ~2.5 minutes
+MAPs.geno.err <- parallel::parLapply(cl, MAPs.geno, 
+                                     error_model)
+# ~22 seconds
+genoprob <- parallel::parLapply(cl,
+                                MAPs.geno.err,
+                                calc_genoprob_error, 
+                                step = 1, 
+                                error = 0.05)
+parallel::stopCluster(cl)
+
+#### Map results
+map.out <- plot_map_list(MAPs.geno.err, col = "ggstyle")
+summary_maps(MAPs.geno.err)
+
+## trying other arguments for LG 4
+temp.map <- MAPs.geno.err[[4]]
+plot(temp.map)
+s.temp <- make_seq_mappoly(temp.map)
+tpt.temp <- make_pairs_mappoly(tpt, s.temp)
+m.temp <- rf_list_to_matrix(tpt.temp)
+plot(m.temp, ord = s.temp$seq.mrk.names, fact = 1)
+lg4.geno.map<-est_rf_hmm_sequential(input.seq = s.temp,
+                                    start.set = 3,
+                                    thres.twopt = 10,
+                                    thres.hmm = 50,
+                                    extend.tail = 100,
+                                    twopt = tpt.temp,
+                                    verbose = TRUE,
+                                    tol = 10e-2,
+                                    tol.final = 10e-4,
+                                    phase.number.limit = 20,
+                                    sub.map.size.diff.limit = 2,
+                                    info.tail = TRUE)
+lg4.geno.map.err <- est_full_hmm_with_global_error(lg4.geno.map, 
+                                                   error = 0.05, 
+                                                   tol = 10e-4, 
+                                                   verbose = TRUE)
+plot(lg4.geno.map.err)
+#MAPs.geno.err[[4]] <- lg4.geno.map
+
+## dropping initial markers in LG 12
+temp.map <- MAPs.geno.err[[12]]
+plot(temp.map)
+s.temp <- make_seq_mappoly(temp.map)
+tpt.temp <- make_pairs_mappoly(tpt, s.temp)
+m.temp <- rf_list_to_matrix(tpt.temp)
+plot(m.temp, ord = s.temp$seq.mrk.names)
+x <- split_and_rephase(temp.map, twopt = tpt.temp, gap.threshold = 8)
+plot(x)
+plot(temp.map, left.lim = 0, right.lim = 20, mrk.names = TRUE)
+temp.map <- drop_marker(temp.map, 
+                        mrk = c("solcap_snp_c2_24586", 
+                                "solcap_snp_c2_24565", 
+                                "solcap_snp_c2_24560"))
+lg12.geno.map <- est_full_hmm_with_global_error(temp.map, 
+                                                error = 0.05, 
+                                                tol = 10e-4, 
+                                                verbose = TRUE)
+plot(lg12.geno.map)
+
+MAPs.geno.err[[12]] <- lg12.geno.map
 
 
-plot(L[[11]][[1]], mrk.names = T, left.lim = 40, right.lim = 70)
-a1<-drop_marker(L[[11]][[1]], mrk = c("solcap_snp_c2_23987", "solcap_snp_c1_7666"))
-a1<-reest_rf(a1, tol = 10e-4)
-plot(a1)
-a.err <- est_full_hmm_with_global_error(a1, error = 0.05)
-plot(a.err)
-s1 <- make_seq_mappoly(gr, arg = a[11], genomic.info = 1)
-s1
-tpt1 <- make_pairs_mappoly(tpt, s1)
-b<-split_and_rephase(a.err, twopt = tpt1, gap.threshold = 5)
-plot(b)
-plot(a1)
-plot(a.err)
-s1 <- make_seq_mappoly(gr, arg = a[i], genomic.info = 1)
-tpt1 <- make_pairs_mappoly(tpt, s1)
-m1 <- make_mat_mappoly(m, s1)
-##Genomic order
-g.o1 <- get_genomic_order(s1)
-s1.g <- make_seq_mappoly(g.o1)
-plot(g.o1)
-plot(m1, ord = s1.g$seq.mrk.names, fact = 3)
-##3.8 minutes
-system.time(lg1.geno.map<-est_rf_hmm_sequential(input.seq = s1.g,
-                                                start.set = 3,
-                                                thres.twopt = 10,
-                                                thres.hmm = 50,
-                                                extend.tail = 100, #30 for all, except 11
-                                                twopt = tpt1,
-                                                verbose = TRUE,
-                                                tol = 10e-2,
-                                                tol.final = 10e-4,
-                                                phase.number.limit = 20,
-                                                sub.map.size.diff.limit = 5,
-                                                info.tail = TRUE,
-                                                reestimate.single.ph.configuration = TRUE))
-plot(lg1.geno.map)
-plot(a1)
-system.time(lg1.mds.map.err <- est_full_hmm_with_global_error(lg1.geno.map, error = 0.05, tol = 10e-4))
-plot(lg1.mds.map.err)
-plot(a.err)
-plot_genome_vs_map(a.err)
-plot_genome_vs_map(L[[11]][4])
+## Final map
+final.map <- update_map(MAPs.geno.err)
+map.out <- plot_map_list(MAPs.geno.err, col = "ggstyle")
+map.out
+plot_genome_vs_map(final.map, same.ch.lg = TRUE)
+summary_maps(final.map)
+export_map_list(final.map, file = "output_map.csv")
+
+#### Preferential pairing
+pp <- calc_prefpair_profiles(genoprob)
+print(pp)
+head(pp$prefpair.psi)
+plot(pp, P = "Atlantic", Q = "B1829")
+
+#### Haplotype probabilities
+hp <- calc_homoprob(genoprob)
+print(hp)
+plot(hp, ind = 2, lg = 1)
+plot(hp, ind = 2, lg = 1:12, use.plotly = FALSE)
+
+
+
+plot(final.map[[1]])
+plot(final.map[[2]], xlim = c(0, 154.07))
+plot(final.map[[3]], xlim = c(0, 154.07))
+plot(final.map[[4]], xlim = c(0, 154.07))
+plot(final.map[[5]], xlim = c(0, 154.07))
+plot(final.map[[6]], xlim = c(0, 154.07))
+plot(final.map[[7]], xlim = c(0, 154.07))
+plot(final.map[[8]], xlim = c(0, 154.07))
+plot(final.map[[9]], xlim = c(0, 154.07))
+plot(final.map[[10]], xlim = c(0, 154.07))
+plot(final.map[[11]], xlim = c(0, 154.07))
+plot(final.map[[12]], xlim = c(0, 154.07))
+
+
+
+save.image(file = "image.rda")
+
+
+#### Assembling linkage groups (order based on MDS)
+LGS.mds<-vector("list", 12)
+for(ch in 1:12){
+  cat("\n ~~~~~~ ch:", ch, "...\n")
+  lg <- which(z==ch)
+  s.temp<-make_seq_mappoly(gr, lg, genomic.info = 1)
+  tpt.temp <- make_pairs_mappoly(tpt, s.temp)
+  s.temp.filt <- rf_snp_filter(tpt.temp, 5, 5, 0.15, c(0.05, 1))
+  m.temp <- make_mat_mappoly(m, s.temp.filt)
+  plot(m.temp)
+  readLines()
+  g.o <- get_genomic_order(s.temp)
+  s.g <- make_seq_mappoly(g.o)
+  tpt.temp <- make_pairs_mappoly(tpt, input.seq = s.g)
+  LGS.mds[[ch]] <- list(seq = s.g, tpt = tpt.temp)
+}
+
+
+
+
+
+
