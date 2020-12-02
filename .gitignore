@@ -9,6 +9,8 @@
 *.rds
 # huge vcf files
 data/sample*
+# output of parallel map contruction
+MAPpoly/output_map*
 # fitPoly dat files
 *.dat
 # User-specific files
