@@ -1,0 +1,1727 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Building a genetic linkage map of an autotetraploid population using MAPpoly},
+  pdfauthor={Marcelo Mollinari, Gabriel Gesteira, Guilherme Pereira, A Augusto Garcia, Zhao-Bang Zeng},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Building a genetic linkage map of an autotetraploid population using
+MAPpoly}
+\author{Marcelo Mollinari, Gabriel Gesteira, Guilherme Pereira, A Augusto
+Garcia, Zhao-Bang Zeng}
+\date{2020-12-03}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{4}
+\tableofcontents
+}
+\setstretch{1.2}
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Linkage maps are essential tools to several genetic endeavours such as
+quantitative trait loci (QTL) analysis, evolutionary studies, assessment
+of colinearity in chromosome-wise scale between genomes, and study of
+meiotic processes. The principle behind linkage map construction is
+detecting recombinant events between genomic positions and summarizing
+them into pairwise recombination fraction estimates. In diploids, the
+assessment of such a phenomenon is relatively straightforward. After the
+homolog duplication, sister chromatids pair up exchanging segments. The
+presence of informative markers, e. g. single nucleotide polymorphisms
+(SNPs) enable straightforward computation of the recombination fraction
+between pairs of genomic positions by comparing the chromosome
+constitution of parents and offspring. If the order of markers is
+unknown, it can be obtained using the pairwise recombination fractions
+in conjunction with optimization algorithms.
+
+In polyploids (species with more than two sets of homolog chromosomes,
+or homologs), the construction of such maps is quite challenging. While
+in diploids a biallelic marker can be fully informative, in polyploids
+they allow accounting for proportions of biallelic dosages. In order to
+recover the multiallelic information present in polyploid species, we
+need to account for recombination frequencies, estimate phase
+configurations and reconstruct the haplotypes of both parents and
+individuals in the population. As the ploidy level increases, the joint
+computation of genomic regions becomes intensive, and other approaches
+such as dimension reduction need to be applied.
+
+\texttt{MAPpoly} is an R package fully capable of building genetic
+linkage maps for biparental populations in polyploid species with ploidy
+level up to 8x. This package is part of the
+\href{https://sweetpotatogenomics.cals.ncsu.edu/}{Genomic Tools for
+Sweetpotato Improvement} (GT4SP), funded by
+\href{https://www.gatesfoundation.org/}{Bill and Melinda Gates
+Foundation}. All of the procedures presented in this document are
+detailed in Mollinari and Garcia (2019) and ({\textbf{???}}) 2020. The
+results obtained with \texttt{MAPpoly} can be readily used for QTL
+mapping with the
+\href{https://github.com/guilherme-pereira/QTLpoly}{QTLpoly package},
+which implements the procedures proposed by Pereira et al. (2020).
+
+Some advantages of \texttt{MAPpoly} are:
+
+\begin{itemize}
+\tightlist
+\item
+  Can handle multiple dataset types
+\item
+  Can handle thousands of markers
+\item
+  Does not depend on single-dose markers (SDM) to build the map
+\item
+  Incorporates genomic information
+\item
+  Explores multipoint information (through Hidden Markov Chain Model)
+\item
+  Can handle high ploidies: up to 8x when using HMM, and up to 12x when
+  using the two-point approach
+\item
+  Can reconstruct haplotypes for parents and all individuals in the
+  population
+\item
+  Recovers the multiallelic nature of polyploid genomes
+\item
+  Detects occurrence, location and frequency of multivalent pairing
+  during meiosis
+\item
+  Robust enough to build genetic linkage maps with multiallelic markers
+  (when available)
+\end{itemize}
+
+\hypertarget{mappoly-installation}{%
+\subsection{\texorpdfstring{\texttt{MAPpoly}
+installation}{MAPpoly installation}}\label{mappoly-installation}}
+
+\hypertarget{from-cran-stable-version}{%
+\subsection{From CRAN (stable version)}\label{from-cran-stable-version}}
+
+To install MAPpoly from the The Comprehensive R Archive Network (CRAN)
+use
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"mappoly"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{from-github-development-version}{%
+\subsection{From GitHub (development
+version)}\label{from-github-development-version}}
+
+You can install the development version from Git Hub. Within R, you need
+to install \texttt{devtools}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{install.packages}\NormalTok{(}\StringTok{"devtools"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+If you are using Windows, you must install the the latest recommended
+version of
+\href{https://cran.r-project.org/bin/windows/Rtools/}{Rtools}.
+
+To install MAPpoly from Git Hub use
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{devtools}\OperatorTok{::}\KeywordTok{install_github}\NormalTok{(}\StringTok{"mmollina/mappoly"}\NormalTok{, }\DataTypeTok{dependencies=}\OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{loading-datasets}{%
+\section{Loading datasets}\label{loading-datasets}}
+
+In its current version, MAPpoly can handle the following types of
+datasets:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  CSV files
+\item
+  MAPpoly files
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Dosage based
+  \item
+    Probability based
+  \end{itemize}
+\item
+  \href{https://CRAN.R-project.org/package=fitPoly}{fitPoly} files
+\item
+  VCF files
+\end{enumerate}
+
+MAPpoly also is capable of importing objects generated by the following
+R packages
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \href{https://CRAN.R-project.org/package=updog}{updog}
+\item
+  \href{https://CRAN.R-project.org/package=polyRAD}{polyRAD}
+\item
+  \href{https://CRAN.R-project.org/package=polymapR}{polymapR}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Datasets
+  \item
+    Maps
+  \end{itemize}
+\end{enumerate}
+
+Both CSV and \texttt{MAPpoly} datasets are sensible formatting errors,
+such as additional spaces, commas and wrong encoding (non-UTF-8). If you
+have any trouble, please double check your files before submitting an
+issue. Detailed steps of all supported files are given on the sections
+below. Also, a considerable proportion of redundant markers is expected
+on large datasets. Since markers having the same information do not
+provide any advantage during the mapping process, redundant ones may be
+removed from the dataset in order to reduce computational effort. All
+reading functions share the \texttt{elim.redundant} argument that
+automatically identifies and removes redundant markers during the
+analysis. The redundant markers can always be recovered and exported
+when the final map is ready.
+
+\hypertarget{reading-csv-files}{%
+\subsection{Reading CSV files}\label{reading-csv-files}}
+
+The preparation of a CSV file for MAPpoly is relatively straightforward.
+It can be done in Microsoft Excel or any other spreadsheet software of
+your preference. In this file, each line comprehends a marker and each
+column comprehends information about the marker. In its current version,
+\texttt{MAPpoly} can handle .csv files with allelic dosage data.
+
+The first line of the CSV file should contain headers for all columns.
+The first five columns should include the following information: marker
+name, dosage for both parents (one column for each), a sequence number
+(e.g.~a chromosome number, if available) and a sequence position
+(e.g.~the marker position within the chromosome, if available). In
+addition to these five headers, you should include the name of all
+individuals in the population. From the second line onwards, all columns
+should contain its values, including allelic dosages for all
+individuals. Missing or absent values should be represented by NA.
+
+NOTE: If genomic information is not available, the `sequence' and
+`sequence position' columns should be filled with NA's.
+
+Example:
+
+\textbf{Important note: avoid spaces in .csv files.} As mentioned above,
+please double check your datasets for extra spaces, commas, dots and
+encoding. Your CSV file should be encoded using UTF-8.
+
+You can read CSV files with the \texttt{read\_geno\_csv} function:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ft=}\StringTok{"https://raw.githubusercontent.com/mmollina/SCRI/main/data/B2721_dose.csv"}
+\NormalTok{tempfl <-}\StringTok{ }\KeywordTok{tempfile}\NormalTok{()}
+\KeywordTok{download.file}\NormalTok{(ft, }\DataTypeTok{destfile =}\NormalTok{ tempfl)}
+\NormalTok{dat.dose.csv <-}\StringTok{ }\KeywordTok{read_geno_csv}\NormalTok{(}\DataTypeTok{file.in  =}\NormalTok{ tempfl, }\DataTypeTok{ploidy =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat.dose.csv}
+\end{Highlighting}
+\end{Shaded}
+
+In addition to the CSV file path, you should indicate the ploidy level
+using the \texttt{ploidy} argument. This function automatically excludes
+uninformative markers. It also performs chi-square tests for all
+markers, considering the expected segregation patterns under Mendelian
+inheritance, random chromosome pairing and no double reduction. You can
+optionally use the \texttt{filter.non.conforming} logical argument
+(default = TRUE), which excludes non-expected genotypes under these
+assumptions. However, keep in mind that the functions in MAPpoly do not
+support double-reduction in its current version, and this can cause the
+software to abort.
+
+\hypertarget{reading-mappoly-files}{%
+\subsection{Reading MAPpoly files}\label{reading-mappoly-files}}
+
+Besides CSV and VCF files, MAPpoly can also handle two dataset types
+that follow the same format: (1) a genotype-based file (with allelic
+dosages) and (2) probability-based file. Both are text files with the
+same header, but with different genotype table formats.
+
+For both files, the header should contain: ploidy level, number of
+individuals (nind), number of markers (nmrk), marker names (mrknames),
+individual names (indnames), allele dosages for parent 1 (dosageP),
+allele dosages for parent 2 (dosageQ), sequence/chromosome information
+(seq), position of each marker (seqpos), number of phenotypic traits
+(nphen) and the phenotypic data (pheno) if available. The header should
+be organized according to this example:
+
+\begin{verbatim}
+ploidy 4
+nind 3
+nmrk 5
+mrknames M1 M2 M3 M4 M5
+indnames Ind1 Ind2 Ind3
+dosageP 0 2 0 0 3
+dosageQ 1 2 1 1 3
+seq 1 1 2 2 3
+seqpos 100 200 50 150 80
+nphen 0
+pheno-----------------------
+geno------------------------
+\end{verbatim}
+
+For more information about MAPpoly file format, please see
+\texttt{?read\_geno} and \texttt{?read\_geno\_prob} documentation from
+\texttt{MAPpoly} package.
+
+\hypertarget{using-read_geno}{%
+\subsubsection{\texorpdfstring{Using
+\texttt{read\_geno}}{Using read\_geno}}\label{using-read_geno}}
+
+The header should be followed by a table containing the genotypes
+(allele dosages) for each marker (rows) and for each individual
+(columns), as follows:
+
+\begin{longtable}[]{@{}lccc@{}}
+\toprule
+& Individual 1 & Individual 2 & Individual 3\tabularnewline
+\midrule
+\endhead
+Marker 1 & 1 & 0 & 0\tabularnewline
+Marker 2 & 3 & 0 & 2\tabularnewline
+Marker 3 & 1 & 0 & 0\tabularnewline
+Marker 4 & 1 & 0 & 0\tabularnewline
+Marker 5 & 3 & 4 & 4\tabularnewline
+\bottomrule
+\end{longtable}
+
+The final file should look like the example below:
+
+\begin{verbatim}
+ploidy 4
+nind 3
+nmrk 5
+mrknames M1 M2 M3 M4 M5
+indnames Ind1 Ind2 Ind3
+dosageP 0 2 0 0 3
+dosageQ 1 2 1 1 3
+seq 1 1 2 2 3
+seqpos 100 200 50 150 80
+nphen 0
+pheno-----------------------
+geno------------------------
+1 0 0
+3 0 2
+1 0 0
+1 0 0
+3 4 4
+\end{verbatim}
+
+Then, use the \texttt{read\_geno} function to read your file:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fl =}\StringTok{ "https://raw.githubusercontent.com/mmollina/MAPpoly_vignettes/master/data/SolCAP_dosage"}
+\NormalTok{tempfl <-}\StringTok{ }\KeywordTok{tempfile}\NormalTok{()}
+\KeywordTok{download.file}\NormalTok{(fl, }\DataTypeTok{destfile =}\NormalTok{ tempfl)}
+\NormalTok{dat.dose.mpl <-}\StringTok{ }\KeywordTok{read_geno}\NormalTok{(}\DataTypeTok{file.in  =}\NormalTok{ tempfl, }\DataTypeTok{elim.redundant =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat.dose.mpl}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{using-read_geno_prob}{%
+\subsubsection{\texorpdfstring{Using
+\texttt{read\_geno\_prob}}{Using read\_geno\_prob}}\label{using-read_geno_prob}}
+
+Following the same header described before, \texttt{read\_geno\_prob}
+reads a table containing the probability distribution for each
+combination of marker \(\times\) individual. Each line on this table
+represents the combination of one marker with one individual, and its
+respective probabilities of having each possible allele dosage. The
+first two columns represent the marker and the individual, respectively,
+and the remaining elements represent the probability associated with
+each one of the possible dosages, as follows:
+
+\begin{longtable}[]{@{}lcccccc@{}}
+\toprule
+Marker & Individual & \(p(d=0)\) & \(p(d=1)\) & \(p(d=2)\) & \(p(d=3)\)
+& \(p(d=4)\)\tabularnewline
+\midrule
+\endhead
+M1 & Ind1 & 0.5 & 0.5 & 0.0 & 0.0 & 0.0\tabularnewline
+M2 & Ind1 & 0.0 & 1.0 & 0.0 & 0.0 & 0.0\tabularnewline
+M3 & Ind1 & 0.3 & 0.7 & 0.0 & 0.0 & 0.0\tabularnewline
+M4 & Ind1 & 0.5 & 0.5 & 0.0 & 0.0 & 0.0\tabularnewline
+M5 & Ind1 & 0.0 & 0.0 & 0.0 & 0.9 & 0.1\tabularnewline
+M1 & Ind2 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0\tabularnewline
+M2 & Ind2 & 0.2 & 0.5 & 0.3 & 0.0 & 0.0\tabularnewline
+M3 & Ind2 & 0.9 & 0.1 & 0.0 & 0.0 & 0.0\tabularnewline
+M4 & Ind2 & 0.9 & 0.1 & 0.0 & 0.0 & 0.0\tabularnewline
+M5 & Ind2 & 0.0 & 0.0 & 0.0 & 0.2 & 0.8\tabularnewline
+M1 & Ind3 & 0.2 & 0.8 & 0.0 & 0.0 & 0.0\tabularnewline
+M2 & Ind3 & 0.4 & 0.6 & 0.0 & 0.0 & 0.0\tabularnewline
+M3 & Ind3 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0\tabularnewline
+M4 & Ind3 & 0.0 & 0.1 & 0.9 & 0.0 & 0.0\tabularnewline
+M5 & Ind3 & 0.1 & 0.9 & 0.0 & 0.0 & 0.0\tabularnewline
+\bottomrule
+\end{longtable}
+
+Notice that each marker \(\times\) individual combination have \(m+1\)
+associated probabilities, being \(m\) the ploidy level and \(m+1\) the
+number of possible allele dosages. Also, each line must sum to 1. The
+final file (header + table) should look like the following example:
+
+\begin{verbatim}
+ploidy 4
+nind 3
+nmrk 5
+mrknames M1 M2 M3 M4 M5
+indnames Ind1 Ind2 Ind3
+dosageP 0 2 0 0 3
+dosageQ 1 2 1 1 3
+seq 1 1 2 2 3
+seqpos 100 200 50 150 80
+nphen 0
+pheno-----------------------
+geno------------------------
+M1 Ind1 0.5 0.5 0.0 0.0 0.0
+M2 Ind1 0.0 1.0 0.0 0.0 0.0
+M3 Ind1 0.3 0.7 0.0 0.0 0.0
+M4 Ind1 0.5 0.5 0.0 0.0 0.0
+M5 Ind1 0.0 0.0 0.0 0.9 0.1
+M1 Ind2 1.0 0.0 0.0 0.0 0.0
+M2 Ind2 0.2 0.5 0.3 0.0 0.0
+M3 Ind2 0.9 0.1 0.0 0.0 0.0
+M4 Ind2 0.9 0.1 0.0 0.0 0.0
+M5 Ind2 0.0 0.0 0.0 0.2 0.8
+M1 Ind3 0.2 0.8 0.0 0.0 0.0
+M2 Ind3 0.4 0.6 0.0 0.0 0.0
+M3 Ind3 1.0 0.0 0.0 0.0 0.0
+M4 Ind3 0.0 0.1 0.9 0.0 0.0
+M5 Ind3 0.1 0.9 0.0 0.0 0.0
+\end{verbatim}
+
+To read the dataset, one should use:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ft=}\StringTok{"https://raw.githubusercontent.com/mmollina/MAPpoly_vignettes/master/data/SolCAP"}
+\NormalTok{tempfl <-}\StringTok{ }\KeywordTok{tempfile}\NormalTok{()}
+\KeywordTok{download.file}\NormalTok{(ft, }\DataTypeTok{destfile =}\NormalTok{ tempfl)}
+\NormalTok{dat.prob.mpl <-}\StringTok{ }\KeywordTok{read_geno_prob}\NormalTok{(}\DataTypeTok{file.in  =}\NormalTok{ tempfl, }\DataTypeTok{prob.thres =} \FloatTok{0.95}\NormalTok{, }\DataTypeTok{elim.redundant =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat.prob.mpl}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Important note:} as this type of file contains the probability
+distribution of all possible dosages, it will take longer to read.
+
+This function automatically excludes monomorphic markers, keeping only
+informative ones. You can define the minimum probability value necessary
+to call a dosage using the \texttt{prob.thres} argument. If the higher
+probability for a marker \(\times\) individual passes this threshold,
+then its associated dosage is used. However, if none of the
+probabilities reach this threshold, then its dosage is considered
+missing (NA). This function also performs chi-square tests for all
+markers, considering the expected segregation patterns under Mendelian
+inheritance, random chromosome pairing and no double reduction. You can
+optionally use the \texttt{filter.non.conforming} logical argument
+(default = TRUE), which excludes non-expected genotypes under these
+assumptions.
+
+\hypertarget{read_vcf}{%
+\subsection{Reading VCF files}\label{read_vcf}}
+
+VCF files are less sensible to errors, because they are usually produced
+by automated SNP calling pipelines and less susceptible to user edition.
+\texttt{MAPpoly} can also handle VCF files of version 4.0 and higher
+produced by the most common softwares, such as TASSEL, GATK, Stacks and
+many others. As few of these softwares can handle poliploidy and
+estimate genotypes correctly, you may use other softwares that are
+dedicated to estimate the allele dosages. Briefly, these softwares model
+the ratio between allele read counts (or intensity) for each marker
+\(\times\) individual combination, and determines which is the most
+probable allele dosage given the observed ratio and other \emph{a
+priori} information. Examples of these softwares are
+\href{http://statgen.esalq.usp.br/SuperMASSA/}{SuperMASSA},
+\href{https://cran.r-project.org/web/packages/fitPoly/index.html}{fitPoly},
+\href{https://potatobreeding.cals.wisc.edu/wp-content/uploads/sites/161/2017/08/ClusterCall_Download.zip}{ClusterCall},
+\href{https://cloud.r-project.org/web/packages/updog/index.html}{updog},
+\href{https://cran.r-project.org/web/packages/polyRAD/vignettes/polyRADtutorial.html}{PolyRAD}
+and many others. After allele dosage estimation, your VCF file should
+contain GT values like \textbf{1/1/1/0} (for an autotetraploid) rather
+than \textbf{1/0}. Since \texttt{MAPpoly} uses allelic dosages (or their
+probabilities) to build genetic maps, we strongly recommend that you use
+one of these softwares to estimate allele dosages before building the
+map. Both \texttt{PolyRAD} and \texttt{updog} have direct integration
+with \texttt{MAPpoly}, as described in the next section.
+
+To demonstrate the \texttt{read\_vcf} function, lets download an
+autohexaploid sweetpotato VCF file from the MAPpoly's vignettes
+repository on Github and read it:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{download.file}\NormalTok{(}\StringTok{"https://github.com/mmollina/MAPpoly_vignettes/raw/master/data/BT/sweetpotato_chr1.vcf.gz"}\NormalTok{, }\DataTypeTok{destfile =} \StringTok{'chr1.vcf.gz'}\NormalTok{)}
+\NormalTok{dat.dose.vcf =}\StringTok{ }\KeywordTok{read_vcf}\NormalTok{(}\DataTypeTok{file =} \StringTok{'chr1.vcf.gz'}\NormalTok{, }\DataTypeTok{parent.1 =} \StringTok{"PARENT1"}\NormalTok{, }\DataTypeTok{parent.2 =} \StringTok{"PARENT2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat.dose.vcf}
+\end{Highlighting}
+\end{Shaded}
+
+Besides the path to your VCF file, you should indicate \texttt{parent.1}
+and \texttt{parent.2} names. Please notice that their names must be
+exactly the same strings that appear in your VCF file. The ploidy level
+will be automatically detected, but you may indicate it using the
+optional \texttt{ploidy} argument to let the function check for possible
+errors. For species with variable ploidy levels (i.e.~sugarcane), please
+indicate the desired ploidy level using the \texttt{ploidy} argument; if
+absent, \texttt{MAPpoly} will use the smallest ploidy level detected.
+
+This function also has options to filter out undesired markers or data
+points, such as those with low depth or high proportion of missing data.
+You can define the following filter arguments: set \texttt{min.av.depth}
+to any integer level in order to remove markers that show average depth
+below this value (default = 0); set \texttt{min.gt.depth} to any integer
+level in order to remove data points that present depth below this value
+(default = 0); set \texttt{max.missing} to any value between 0 and 1 in
+order to remove markers that present missing data proportion above this
+value (default = 1).
+
+\texttt{read\_vcf} performs chi-square tests for all markers,
+considering the expected segregation patterns under Mendelian
+inheritance, random chromosome pairing and no double reduction. You can
+optionally use the \texttt{filter.non.conforming} logical argument
+(default = TRUE), which excludes non-expected genotypes under these
+assumptions. The p-value threshold used by the segregation test can be
+defined by the \texttt{thresh.line} argument.
+
+Please notice that the returning object from \texttt{read\_vcf} has some
+additional information: reference and alternative alleles (bases) for
+each marker; and average depth of each marker. You can inspect all
+marker depths using the following code as an example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\NormalTok{dosage_combs =}\StringTok{ }\KeywordTok{cbind}\NormalTok{(dat.dose.vcf}\OperatorTok{$}\NormalTok{dosage.p, dat.dose.vcf}\OperatorTok{$}\NormalTok{dosage.q)}
+\NormalTok{dc_simplex =}\StringTok{ }\KeywordTok{apply}\NormalTok{(dosage_combs,}\DecValTok{1}\NormalTok{,}\ControlFlowTok{function}\NormalTok{(x) }\ControlFlowTok{if}\NormalTok{(}\KeywordTok{all}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{) }\OperatorTok{%in%}\StringTok{ }\NormalTok{x) }\OperatorTok{|}\StringTok{ }\KeywordTok{all}\NormalTok{(}\KeywordTok{c}\NormalTok{(dat.dose.vcf}\OperatorTok{$}\NormalTok{m}\DecValTok{-1}\NormalTok{, dat.dose.vcf}\OperatorTok{$}\NormalTok{m) }\OperatorTok{%in%}\StringTok{ }\NormalTok{x)) }\KeywordTok{return}\NormalTok{(}\OtherTok{TRUE}\NormalTok{) }\ControlFlowTok{else} \KeywordTok{return}\NormalTok{(}\OtherTok{FALSE}\NormalTok{))}
+\NormalTok{dc_dsimplex =}\StringTok{ }\KeywordTok{apply}\NormalTok{(dosage_combs,}\DecValTok{1}\NormalTok{,}\ControlFlowTok{function}\NormalTok{(x) }\ControlFlowTok{if}\NormalTok{(}\KeywordTok{all}\NormalTok{(x }\OperatorTok{==}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{)) }\OperatorTok{|}\StringTok{ }\KeywordTok{all}\NormalTok{(x }\OperatorTok{==}\StringTok{ }\KeywordTok{c}\NormalTok{(dat.dose.vcf}\OperatorTok{$}\NormalTok{m}\DecValTok{-1}\NormalTok{, dat.dose.vcf}\OperatorTok{$}\NormalTok{m}\DecValTok{-1}\NormalTok{))) }\KeywordTok{return}\NormalTok{(}\OtherTok{TRUE}\NormalTok{) }\ControlFlowTok{else} \KeywordTok{return}\NormalTok{(}\OtherTok{FALSE}\NormalTok{))}
+
+\NormalTok{dc_simplex[}\KeywordTok{which}\NormalTok{(dc_simplex }\OperatorTok{==}\StringTok{ }\OtherTok{TRUE}\NormalTok{)] =}\StringTok{ "simplex"}
+\NormalTok{dc_simplex[}\KeywordTok{which}\NormalTok{(dc_dsimplex }\OperatorTok{==}\StringTok{ }\OtherTok{TRUE}\NormalTok{)] =}\StringTok{ 'double simplex'}
+\NormalTok{dc_simplex[}\KeywordTok{which}\NormalTok{(dc_simplex }\OperatorTok{==}\StringTok{ 'FALSE'}\NormalTok{)] =}\StringTok{ 'multiplex'}
+
+\NormalTok{data_depths =}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\StringTok{'Marker depths'}\NormalTok{ =}\StringTok{ }\NormalTok{dat.dose.vcf}\OperatorTok{$}\NormalTok{all.mrk.depth,}
+                         \StringTok{'Depth classes'}\NormalTok{ =}\StringTok{ }\KeywordTok{findInterval}\NormalTok{(dat.dose.vcf}\OperatorTok{$}\NormalTok{all.mrk.depth, }\KeywordTok{c}\NormalTok{(}\DecValTok{200}\NormalTok{,}\DecValTok{300}\NormalTok{,}\DecValTok{400}\NormalTok{,}\DecValTok{500}\NormalTok{,}\DecValTok{600}\NormalTok{,}\DecValTok{50000}\NormalTok{)),}
+                         \StringTok{'Dosage combinations'}\NormalTok{ =}\StringTok{ }\NormalTok{dc_simplex, }\DataTypeTok{check.names =}\NormalTok{ F)}
+
+\KeywordTok{ggplot}\NormalTok{(data_depths, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill=}\StringTok{`}\DataTypeTok{Dosage combinations}\StringTok{`}\NormalTok{, }\DataTypeTok{x=}\StringTok{`}\DataTypeTok{Depth classes}\StringTok{`}\NormalTok{, }\DataTypeTok{y=}\StringTok{`}\DataTypeTok{Marker depths}\StringTok{`}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{position =} \StringTok{'stack'}\NormalTok{, }\DataTypeTok{stat =} \StringTok{'identity'}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_continuous}\NormalTok{(}\DataTypeTok{breaks=}\DecValTok{0}\OperatorTok{:}\DecValTok{5}\NormalTok{, }\DataTypeTok{labels=}\KeywordTok{c}\NormalTok{(}\StringTok{">200"}\NormalTok{,}\StringTok{"200-300"}\NormalTok{,}\StringTok{"300-400"}\NormalTok{,}\StringTok{"400-500"}\NormalTok{,}\StringTok{"500-600"}\NormalTok{, }\StringTok{">600"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{importing-data-from-third-party-packages}{%
+\subsection{Importing data from third party
+packages}\label{importing-data-from-third-party-packages}}
+
+As mentioned above, polyploid sequencing data must be used to estimate
+allelic dosages prior to linkage map building. The R package
+\texttt{PolyRAD} has its own function to export genotypes to the
+\texttt{MAPpoly}'s genotype probability distribution format. One may use
+the commands above to import from \texttt{PolyRAD}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# load example dataset from polyRAD}
+\KeywordTok{library}\NormalTok{(polyRAD)}
+\KeywordTok{data}\NormalTok{(exampleRAD_mapping)}
+\NormalTok{exampleRAD_mapping =}\StringTok{ }\KeywordTok{SetDonorParent}\NormalTok{(exampleRAD_mapping, }\StringTok{"parent1"}\NormalTok{)}
+\NormalTok{exampleRAD_mapping =}\StringTok{ }\KeywordTok{SetRecurrentParent}\NormalTok{(exampleRAD_mapping, }\StringTok{"parent2"}\NormalTok{)}
+\NormalTok{exampleRAD_mapping =}\StringTok{ }\KeywordTok{PipelineMapping2Parents}\NormalTok{(exampleRAD_mapping)}
+
+\CommentTok{# export to MAPpoly}
+\NormalTok{outfile2 =}\StringTok{ }\KeywordTok{tempfile}\NormalTok{()}
+\KeywordTok{Export_MAPpoly}\NormalTok{(exampleRAD_mapping, }\DataTypeTok{file =}\NormalTok{ outfile2)}
+
+\CommentTok{# Read in MAPpoly}
+\NormalTok{mydata_polyrad =}\StringTok{ }\KeywordTok{read_geno_prob}\NormalTok{(outfile2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mydata_polyrad}
+\end{Highlighting}
+\end{Shaded}
+
+You can also use the \texttt{MAPpoly}'s function
+\texttt{import\_from\_updog} to import any dataset generated by
+\texttt{updog}'s function \texttt{multidog}, following the example
+below:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Load example dataset from updog}
+\KeywordTok{library}\NormalTok{(updog)}
+\KeywordTok{data}\NormalTok{(uitdewilligen)}
+\NormalTok{mout =}\StringTok{ }\KeywordTok{multidog}\NormalTok{(}\DataTypeTok{refmat =} \KeywordTok{t}\NormalTok{(uitdewilligen}\OperatorTok{$}\NormalTok{refmat), }
+                \DataTypeTok{sizemat =} \KeywordTok{t}\NormalTok{(uitdewilligen}\OperatorTok{$}\NormalTok{sizemat), }
+                \DataTypeTok{ploidy =}\NormalTok{ uitdewilligen}\OperatorTok{$}\NormalTok{ploidy, }
+                \DataTypeTok{model =} \StringTok{"f1"}\NormalTok{,}
+                \DataTypeTok{p1_id =} \KeywordTok{colnames}\NormalTok{(}\KeywordTok{t}\NormalTok{(uitdewilligen}\OperatorTok{$}\NormalTok{sizemat))[}\DecValTok{1}\NormalTok{],}
+                \DataTypeTok{p2_id =} \KeywordTok{colnames}\NormalTok{(}\KeywordTok{t}\NormalTok{(uitdewilligen}\OperatorTok{$}\NormalTok{sizemat))[}\DecValTok{2}\NormalTok{],}
+                \DataTypeTok{nc =} \DecValTok{4}\NormalTok{)}
+\NormalTok{mydata_updog =}\StringTok{ }\KeywordTok{import_from_updog}\NormalTok{(mout)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mydata_updog}
+\end{Highlighting}
+\end{Shaded}
+
+Please notice that \texttt{updog} removes both sequence and sequence
+position information that may be present in the VCF file. We highly
+recommend that you use this information during the linkage map building,
+when available.
+
+\hypertarget{combining-multiple-datasets}{%
+\subsection{Combining multiple
+datasets}\label{combining-multiple-datasets}}
+
+It is not rare to have two or more datasets regarding the same
+population or individuals from different sources of molecular data, such
+as SNP chips, GBS and/or microsatellites. \texttt{MAPpoly} can combine
+datasets when individual names are the same, using the function
+\texttt{merge\_datasets}. To demonstrate its functionality, lets
+download two VCF files (autohexaploid sweetpotato) from the MAPpoly
+vignettes repository on Github, and read them using \texttt{read\_vcf}
+function:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Downloading VCF files regarding chromosome 1 and 2}
+\KeywordTok{download.file}\NormalTok{(}\StringTok{"https://github.com/mmollina/MAPpoly_vignettes/raw/master/data/BT/sweetpotato_chr1.vcf.gz"}\NormalTok{, }\DataTypeTok{destfile =} \StringTok{'chr1.vcf.gz'}\NormalTok{)}
+\KeywordTok{download.file}\NormalTok{(}\StringTok{"https://github.com/mmollina/MAPpoly_vignettes/raw/master/data/BT/sweetpotato_chr2.vcf.gz"}\NormalTok{, }\DataTypeTok{destfile =} \StringTok{'chr2.vcf.gz'}\NormalTok{)}
+\NormalTok{data1 =}\StringTok{ }\KeywordTok{read_vcf}\NormalTok{(}\DataTypeTok{file =} \StringTok{'chr1.vcf.gz'}\NormalTok{, }\DataTypeTok{parent.1 =} \StringTok{"PARENT1"}\NormalTok{, }\DataTypeTok{parent.2 =} \StringTok{"PARENT2"}\NormalTok{)}
+\NormalTok{data2 =}\StringTok{ }\KeywordTok{read_vcf}\NormalTok{(}\DataTypeTok{file =} \StringTok{'chr2.vcf.gz'}\NormalTok{, }\DataTypeTok{parent.1 =} \StringTok{"PARENT1"}\NormalTok{, }\DataTypeTok{parent.2 =} \StringTok{"PARENT2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+As we can see, both have different markers for the same population:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# See datasets}
+\KeywordTok{print}\NormalTok{(data1)}
+\KeywordTok{print}\NormalTok{(data2)}
+\end{Highlighting}
+\end{Shaded}
+
+Now lets merge them and see the output:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Merge datasets}
+\NormalTok{merged_data =}\StringTok{ }\KeywordTok{merge_datasets}\NormalTok{(data1, data2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(merged_data)}
+\end{Highlighting}
+\end{Shaded}
+
+Notice that all markers of both datasets were merged successfully, which
+allows using just one (merged) dataset in the following steps of map
+construction.
+
+\hypertarget{exploratory-analysis}{%
+\subsection{Exploratory Analysis}\label{exploratory-analysis}}
+
+\hypertarget{whole-dataset}{%
+\subsubsection{Whole dataset}\label{whole-dataset}}
+
+For didatic purposes, we will keep using the tetraploid potato array
+data (loaded using the examples above). We will construct a genetic map
+of the B2721 population, which is a cross between two tetraploid potato
+varieties: Atlantic and B1829-5. The population comprises 160 offsprings
+genotyped with the SolCAP Infinium 8303 potato array. The dataset also
+contains the genomic order of the SNPs from the \emph{Solanum tuberosum}
+genome version 4.03. The genotype calling was performed with fitPoly R
+package using
+\href{https://github.com/mmollina/Autopolyploid_Linkage/blob/master/src/solcap_map_construction/snp_calling/genotype_calling_public_data_fittetra.R}{this
+pipeline}. Another option would be to use ClusterCall and
+\href{https://mmollina.github.io/tutorials/solcap/solcap_example.html}{this
+pipeline}.
+
+Once the data is loaded, you can explore the dataset using the
+\texttt{print} function:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(dat.dose.mpl, }\DataTypeTok{detailed =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+This function outputs information about the dataset including the ploidy
+level, total number of individuals, total number of markers, number of
+informative markers, proportion of missing data and redundant markers.
+If \texttt{detailed\ =\ TRUE}, the function also outputs the number of
+markers in each sequence, if available, and the number of markers
+contained in all possible dosage combinations between both parents.
+
+You can also explore the dataset visually using the \texttt{plot}
+function:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(dat.dose.mpl)}
+\end{Highlighting}
+\end{Shaded}
+
+The output figure shows a bar plot on the left-hand side with the number
+of markers contained in each allele dosage combination between both
+parents. The right labels indicate allele dosages for Parent 1 and
+Parent 2, respectively. The upper-right plot contains the
+\(\log_{10}(p-value)\) from \(\chi^2\) tests for all markers,
+considering the expected segregation patterns under Mendelian
+inheritance. The lower-right plot contains a graphical representation of
+the allele dosages and missing data distribution for all markers and
+individuals. Finally, the bottom-right graphic shows the proportion of
+redundant markers in the dataset, when available.
+
+\hypertarget{marker-specific}{%
+\subsubsection{Marker-specific}\label{marker-specific}}
+
+If you want to view a specific marker information, use the
+\texttt{plot\_mrk\_info} function. You should indicate your dataset
+object using the \texttt{input.data} argument, and the desired marker
+using the \texttt{mrk} argument. You can indicate the marker using its
+number or its name (string):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# For a dosage-based data analysis of marker 104}
+\KeywordTok{plot_mrk_info}\NormalTok{(}\DataTypeTok{input.data =}\NormalTok{ dat.dose.mpl, }\DataTypeTok{mrk =} \DecValTok{240}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# For a probability-based data analysis of the marker solcap_snp_c1_13686}
+\KeywordTok{plot_mrk_info}\NormalTok{(}\DataTypeTok{input.data =}\NormalTok{ dat.prob.mpl, }\DataTypeTok{mrk =} \StringTok{'solcap_snp_c1_13686'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+When applied to a dosage-based dataset, the function outputs a figure
+showing: marker name and position in the dataset, allele dosage in
+parents 1 and 2, proportion of missing data, p-value of the associated
+\(\chi^2\) test for Mendelian segregation, sequence and position
+information (when available). The figure also contains a plot with the
+allele dosage and missing data distibution in the population.
+
+When applied to a probability-baed dataset, the function outputs the
+probability threshold and a 3-dimensional plot containing the
+probability distribution for each allele dosage considering all
+individuals.
+
+\hypertarget{filtering-and-quality-control}{%
+\section{Filtering and Quality
+Control}\label{filtering-and-quality-control}}
+
+In order to build a good genetic map, good quality data is desired to
+guarantee reliable estimates of recombination fractions, linkage phases
+and haplotypes. High proportions of messy data, such as unexpected
+segregation patterns and missing data, will reduce the reliability of
+these estimates. Furthermore, sequencing technologies are able to
+produce hundreds of thousands of markers, and a considerable proportion
+of redundant markers is expected. Markers that carry the same
+information are not informative and must be removed from the dataset, in
+order to reduce computational effort. \texttt{MAPpoly} handle some
+filtering functions that are described in the sections below.
+
+\hypertarget{missing-data-filtering}{%
+\subsection{Missing data filtering}\label{missing-data-filtering}}
+
+\texttt{MAPpoly} is able to filter markers and/or individuals that
+exceeds a defined threshold for missing data. The function
+\texttt{filter\_missing} does that and creates or updates your dataset
+according to its arguments' values. The argument \texttt{input.data}
+should contain your dataset object, and you can choose to filter either
+by `marker' or `individual' using the \texttt{type} argument (string).
+You can also define the maximum proportion of missing data using the
+\texttt{filter.thres} argument (ranges from 0 to 1, i.e.~a threshold of
+0.2 will keep just markers or individuals with less than 20\% of missing
+data). When TRUE (default), the \texttt{inter} argument plots markers or
+individuals vs.~frequency of missing data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Filtering dataset by marker}
+\NormalTok{dat.filt.mrk <-}\StringTok{ }\KeywordTok{filter_missing}\NormalTok{(}\DataTypeTok{input.data =}\NormalTok{ dat.dose.mpl, }\DataTypeTok{type =} \StringTok{"marker"}\NormalTok{, }
+                               \DataTypeTok{filter.thres =} \FloatTok{0.2}\NormalTok{, }\DataTypeTok{inter =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(dat.filt.mrk)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Filtering dataset by individual}
+\NormalTok{dat.filt.ind <-}\StringTok{ }\KeywordTok{filter_missing}\NormalTok{(}\DataTypeTok{input.data =}\NormalTok{ dat.filt.mrk, }\DataTypeTok{type =} \StringTok{"individual"}\NormalTok{, }
+                               \DataTypeTok{filter.thres =} \FloatTok{0.1}\NormalTok{, }\DataTypeTok{inter =} \OtherTok{TRUE}\NormalTok{)                            }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(dat.filt.ind)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat.dose.filt <-}\StringTok{ }\NormalTok{dat.filt.ind}
+\end{Highlighting}
+\end{Shaded}
+
+In this dataset, just 43 markers presented a proportion of missing data
+above the defined threshold, while 16 individuals exceeded the defined
+threshold. Then we will use the final filtered dataset during the rest
+of the analysis. Please notice that the function \texttt{read\_vcf} also
+provides parameters to filter out markers depending on their average
+depth and missing data, as well as removes data points that do not reach
+a minimum pre-defined depth value. Check the
+\protect\hyperlink{read_vcf}{\texttt{read\_vcf}} section for more
+information.
+
+\hypertarget{segregation-test}{%
+\subsection{Segregation test}\label{segregation-test}}
+
+Another very important point to consider is the expected marker
+segregation pattern under Mendelian inheritance. Markers with messy or
+distorted segregation can produce unreliable estimates and may be
+removed (at least for a while) from the dataset. A good test for that is
+the chi-square (\(\chi^2\)), which basically matches expected genotype
+frequencies against observed frequencies and calculates the associated
+p-value. In order to define the p-value threshold for the tests, we will
+use the Bonferroni correction:
+
+\[\alpha_{thres} = \frac{\alpha}{\#markers}\]
+
+We will also assume that only random chromosome bivalent pairing occurs
+and there is no double reduction.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pval.bonf <-}\StringTok{ }\FloatTok{0.05}\OperatorTok{/}\NormalTok{dat.dose.filt}\OperatorTok{$}\NormalTok{n.mrk}
+\NormalTok{mrks.chi.filt <-}\StringTok{ }\KeywordTok{filter_segregation}\NormalTok{(dat.dose.filt, }\DataTypeTok{chisq.pval.thres =}\NormalTok{  pval.bonf, }\DataTypeTok{inter =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{seq.init <-}\StringTok{ }\KeywordTok{make_seq_mappoly}\NormalTok{(mrks.chi.filt)}
+\end{Highlighting}
+\end{Shaded}
+
+Please notice that \texttt{filter\_segregation} does not produce a
+filtered dataset; it just tells you which markers follow the expected
+Mendelian segregation pattern. To select these markers from your
+dataset, you may use the \texttt{make\_seq\_mappoly} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(seq.init)}
+\end{Highlighting}
+\end{Shaded}
+
+It is worth to mention that all redundant markers identified during data
+reading step are stored in the main dataset. The redundant markers are
+automatically removed and can be added back once the maps are finished
+using the function \texttt{update\_map} (described in details later
+during this tutorial).
+
+\hypertarget{two-point-analysis}{%
+\section{Two-point analysis}\label{two-point-analysis}}
+
+Once the markers are filtered and selected, we need to compute the
+pairwise recombination fraction between all of them (two-point
+analysis). First, let us load the genotype counts
+(\(\zeta_{\mbox{T}_{k},\mbox{T}_{k^{\prime}}}(l_{P}, l_{Q})\)) defined
+in equation 20 in \href{https://doi.org/10.1534/g3.119.400378}{Mollinari
+and Garcia, 2019}. This object is fundamental to perform the dimension
+reduction of the transition space.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{counts <-}\StringTok{ }\KeywordTok{cache_counts_twopt}\NormalTok{(}\DataTypeTok{input.seq =}\NormalTok{ seq.init, }\DataTypeTok{cached =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{counts}
+\end{Highlighting}
+\end{Shaded}
+
+When \texttt{cached\ =\ TRUE}, the function loads all counts from a
+internal file instead of performing all calculations again.
+
+Next, the function \texttt{est\_pairwise\_rf} is used to estimate all
+the pairwise recombination fractions between markers in the sequence
+provided. Since the output object is too big to be fully displayed on
+the screen, \texttt{MAPpoly} shows a summary. Please notice that
+parallel computation is available and, if you want to use of that, you
+need to define the available number of cores in your machine and also
+guarantee that you have sufficient RAM memory for that. Remember that it
+is always good to leave one core available for the system, and be aware
+that this step \textbf{will take a while} to compute if you have few
+cores available.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Defining number of cores}
+\NormalTok{n.cores =}\StringTok{ }\NormalTok{parallel}\OperatorTok{::}\KeywordTok{detectCores}\NormalTok{() }\OperatorTok{-}\StringTok{ }\DecValTok{1}
+
+\CommentTok{#(~ 9.5 minutes using 14 cores)}
+\NormalTok{all.rf.pairwise <-}\StringTok{ }\KeywordTok{est_pairwise_rf}\NormalTok{(}\DataTypeTok{input.seq =}\NormalTok{ seq.init, }
+                                   \DataTypeTok{count.cache =}\NormalTok{ counts, }
+                                   \DataTypeTok{n.clusters =}\NormalTok{ n.cores)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all.rf.pairwise}
+\end{Highlighting}
+\end{Shaded}
+
+To assess the recombination fraction between a particular pair of
+markers, say markers 93 and 98, we use the following syntax:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all.rf.pairwise}\OperatorTok{$}\NormalTok{pairwise}\OperatorTok{$}\StringTok{`}\DataTypeTok{93-98}\StringTok{`}
+\KeywordTok{plot}\NormalTok{(all.rf.pairwise, }\DataTypeTok{first.mrk =} \DecValTok{93}\NormalTok{, }\DataTypeTok{second.mrk =} \DecValTok{98}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+In this case, \texttt{93-98} represents the position of the markers in
+the filtered data set. The name of the rows have the form \texttt{x-y},
+where \texttt{x} and \texttt{y} indicate how many homologous chromosomes
+share the same allelic variant in parents \(P1\) and \(P2\),
+respectively (see \href{https://doi.org/10.1534/g3.119.400378}{Mollinari
+and Garcia, 2019} for notation). The first column indicates the LOD
+Score in relation to the most likely linkage phase configuration. The
+second column shows the estimated recombination fraction for each
+configuration, and the third indicates the LOD Score comparing the
+likelihood under no linkage (\(r = 0.5\)) with the estimated
+recombination fraction (evidence of linkage).
+
+\hypertarget{assembling-recombination-fraction-and-lod-score-matrices}{%
+\subsection{Assembling recombination fraction and LOD Score
+matrices}\label{assembling-recombination-fraction-and-lod-score-matrices}}
+
+Recombination fraction and LOD Score matrices are fundamental in genetic
+mapping. Later in this tutorial, we will use these matrices as the basic
+information to order markers and also to perform some diagnostics. To
+convert the two-point object into recombination fraction and LOD Score
+matrices, we need to assume thresholds for the three columns observed in
+the previous output. The arguments \texttt{thresh.LOD.ph} and
+\texttt{thresh.LOD.rf} set LOD Scores thresholds for the second most
+likely linkage phase configuration and recombination fraction. Here we
+assume \texttt{thresh.LOD.ph\ =\ 0} and \texttt{thresh.LOD.rf\ =\ 0},
+thus no matter how likely is the second best option, all the computed
+values will be considered. The argument \texttt{thresh.rf\ =\ 0.5}
+indicates that the maximum accepted recombination fraction is
+\texttt{0.5}. To convert these values in a recombination fraction
+matrix, we use the function \texttt{rf\_list\_to\_matrix}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mat <-}\StringTok{ }\KeywordTok{rf_list_to_matrix}\NormalTok{(}\DataTypeTok{input.twopt =}\NormalTok{ all.rf.pairwise, }\DataTypeTok{n.clusters =}\NormalTok{ n.cores)}
+\end{Highlighting}
+\end{Shaded}
+
+Please notice that for big datasets, you may use the multi-core support
+to perform the conversions, using the parameter \texttt{n.clusters} to
+define the number of CPU's. It is also possible to filter again for the
+parameters mentioned above, such as \texttt{thresh.LOD.ph},
+\texttt{thresh.LOD.rf} and \texttt{thresh.rf}.
+
+We can also plot this matrix using the reference genome order. For doing
+so, we use the function \texttt{get\_genomic\_order} to get the genomic
+order of the input sequence and use the resulting order to index the
+recombination fraction matrix. If the reference order is consistent with
+the marker order in this specific population, we should observe a
+block-diagonal matrix and within each sub-matrix, a monotonic pattern.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{id<-}\KeywordTok{get_genomic_order}\NormalTok{(seq.init)}
+\KeywordTok{plot}\NormalTok{(mat, }\DataTypeTok{ord =} \KeywordTok{rownames}\NormalTok{(id), }\DataTypeTok{index =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+As expected, we can observe the block-diagonal and monotonic patterns.
+In the previous case, the thresholds allowed to plot almost all points
+in the recombination fraction matrix. The empty cells in the matrix
+indicate markers where it is impossible to detect recombinant events
+using two-point estimates (e.g., between \(1 \times 0\) and
+\(0 \times 1\) marker). Yet, if the thresholds become more stringent
+(higher LODs and lower rf), the matrix becomes more sparse.
+
+\hypertarget{assembling-linkage-groups}{%
+\section{Assembling linkage groups}\label{assembling-linkage-groups}}
+
+The function \texttt{group\_mappoly} assign markers to linkage groups
+using the recombination fraction matrix obtained above. The user can
+provide an expected number of groups or run the interactive version of
+the function using \texttt{inter\ =\ TRUE}. Since in this data set we
+expect 12 linkage groups (basic chromosome number in potato), we use
+\texttt{expected.groups\ =\ 12}. If the data set provides the chromosome
+where the markers are located, the function allows comparing the groups
+obtained using the pairwise recombination fraction and the chromosome
+information provided using the \texttt{comp.mat\ =\ TRUE}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{grs <-}\StringTok{ }\KeywordTok{group_mappoly}\NormalTok{(}\DataTypeTok{input.mat =}\NormalTok{ mat,}
+                     \DataTypeTok{expected.groups =} \DecValTok{12}\NormalTok{,}
+                     \DataTypeTok{comp.mat =} \OtherTok{TRUE}\NormalTok{, }
+                     \DataTypeTok{inter =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{grs}
+\end{Highlighting}
+\end{Shaded}
+
+Here, we have the 3639 markers distributed in 12 linkage groups. The
+rows indicate linkage groups obtained using linkage information and the
+columns are the chromosomes in the reference genome. Notice the diagonal
+indicating the concordance between the two sources of information. Now,
+we can plot the resulting marker cluster analysis.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(grs)}
+\end{Highlighting}
+\end{Shaded}
+
+Once the linkage groups are properly assembled, we use the function
+\texttt{make\_seq\_mappoly} to make marker sequences from the group
+analysis. We will assemble a list with 12 positions, each one containing
+the corresponding linkage group sequence. Also, we will use only markers
+allocated in the diagonal of the previous comparison matrix. Thus only
+markers that were assigned to a particular linkage group using both
+sources of information will be considered. We will also assemble a
+smaller two-point object using the functions
+\texttt{make\_pairs\_mappoly} and \texttt{rf\_snp\_filter} to facilitate
+further parallelization procedures.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{LGS<-}\KeywordTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, }\DecValTok{12}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{12}\NormalTok{)\{}
+\NormalTok{    temp1 <-}\StringTok{ }\KeywordTok{make_seq_mappoly}\NormalTok{(grs, j)}
+\NormalTok{    temp2 <-}\StringTok{ }\KeywordTok{get_genomic_order}\NormalTok{(temp1) }\CommentTok{# assembling sequence considering the genomic order}
+\NormalTok{    lg.id <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{names}\NormalTok{(}\KeywordTok{which.max}\NormalTok{(}\KeywordTok{table}\NormalTok{(temp2[,}\DecValTok{1}\NormalTok{]))))}
+\NormalTok{    nm <-}\StringTok{ }\KeywordTok{rownames}\NormalTok{(temp2)[}\KeywordTok{which}\NormalTok{(temp2[,}\DecValTok{1}\NormalTok{] }\OperatorTok{==}\StringTok{ }\NormalTok{lg.id)]}
+\NormalTok{    temp3 <-}\StringTok{ }\KeywordTok{make_seq_mappoly}\NormalTok{(dat.dose.filt, nm)}
+\NormalTok{    tpt <-}\StringTok{ }\KeywordTok{make_pairs_mappoly}\NormalTok{(all.rf.pairwise, }\DataTypeTok{input.seq =}\NormalTok{ temp3)}
+\NormalTok{    lgtemp <-}\StringTok{ }\KeywordTok{rf_snp_filter}\NormalTok{(}\DataTypeTok{input.twopt =}\NormalTok{ tpt)}
+\NormalTok{    LGS[[lg.id]] <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}\DataTypeTok{lg =}\NormalTok{ lgtemp, }
+        \DataTypeTok{tpt =} \KeywordTok{make_pairs_mappoly}\NormalTok{(all.rf.pairwise, }\DataTypeTok{input.seq =}\NormalTok{ lgtemp))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Now, let us print the recombination fraction matrices for each linkage
+group.
+
+\hypertarget{estimating-the-map-for-a-given-order}{%
+\section{Estimating the map for a given
+order}\label{estimating-the-map-for-a-given-order}}
+
+In this section, we will use the marker order provided by the
+\emph{Solanum tuberosum} genome version 4.03. The MDS ordering approach
+will be addressed later in this tutorial. The estimation of the genetic
+map for a given order involves the computation of recombination fraction
+between adjacent markers and also finding the linkage phase
+configuration of those markers in both parents. The core function to
+perform these tasks in \texttt{MAPpoly} is
+\texttt{est\_rf\_hmm\_sequential}. This function uses the pairwise
+recombination fraction as the first source of information to
+sequentially position allelic variants in specific homologs. For
+situations where pairwise analysis has limited power, the algorithm
+relies on the likelihood obtained through a hidden Markov model (HMM)
+\href{https://doi.org/10.1534/g3.119.400378}{Mollinari and Garcia,
+2019}. Once all markers are positioned, the final map is reconstructed
+using the HMM multipoint algorithm.
+
+Several arguments are available to control the inclusion and phasing of
+the markers in the chain. The argument \texttt{start.set} defines the
+number of initial markers to be used in a exhaustive search for the most
+probable configuration. \texttt{thres.twopt} receives the threshold to
+whether when the linkage phases compared via two-point analysis should
+be considered, and the HMM analysis should not be used to infer the
+linkage phase (A. K. A. \(\eta\) in
+\href{https://doi.org/10.1534/g3.119.400378}{Mollinari and Garcia,
+2019}). \texttt{thres.hmm} receives the threshold for keeping competing
+maps computed using HMM (if the two-point analysis was not enough) in
+the next round of marker insertion. \texttt{extend.tail} indicates the
+number of markers that should be considered at the end of the chain to
+insert a new marker. \texttt{tol} and \texttt{tol.final} receive the
+desired accuracy to estimate the sub-maps during the sequential phasing
+procedure and the desired accuracy in the final map.
+\texttt{phase.number.limit} receives the limit number of linkage phase
+configurations to be tested using HMM. \texttt{info.tail} is a logical
+argument: if TRUE it uses the complete informative tail (last markers in
+the chain that allow all homologous to be distinguished in the parents)
+of the chain to calculate the likelihood of the linkage phases.
+
+First, as an example, let us estimate the map for linkage group 3. The
+values used for all arguments were obtained using a balance of
+processing speed and accuracy of the algorithm. As an exercise, it is
+interesting to try different values and check out the results. For now,
+let us stick with the following values (\textbf{this step can take some
+hours to finish}, depending on chosen parameters):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lg3.map <-}\StringTok{ }\KeywordTok{est_rf_hmm_sequential}\NormalTok{(}\DataTypeTok{input.seq =}\NormalTok{ LGS[[}\DecValTok{3}\NormalTok{]]}\OperatorTok{$}\NormalTok{lg,}
+                                \DataTypeTok{start.set =} \DecValTok{10}\NormalTok{,}
+                                \DataTypeTok{thres.twopt =} \DecValTok{10}\NormalTok{, }
+                                \DataTypeTok{thres.hmm =} \DecValTok{10}\NormalTok{,}
+                                \DataTypeTok{extend.tail =} \DecValTok{200}\NormalTok{,}
+                                \DataTypeTok{info.tail =} \OtherTok{TRUE}\NormalTok{, }
+                                \DataTypeTok{twopt =}\NormalTok{ LGS[[}\DecValTok{3}\NormalTok{]]}\OperatorTok{$}\NormalTok{tpt,}
+                                \DataTypeTok{sub.map.size.diff.limit =} \DecValTok{10}\NormalTok{, }
+                                \DataTypeTok{phase.number.limit =} \DecValTok{20}\NormalTok{,}
+                                \DataTypeTok{reestimate.single.ph.configuration =} \OtherTok{TRUE}\NormalTok{,}
+                                \DataTypeTok{tol =} \FloatTok{10e-3}\NormalTok{,}
+                                \DataTypeTok{tol.final =} \FloatTok{10e-4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Now, use the functions \texttt{print} and \texttt{plot} to view the
+results:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(lg3.map)}
+\KeywordTok{plot}\NormalTok{(lg3.map)}
+\end{Highlighting}
+\end{Shaded}
+
+Colored rectangles (red and blue) indicate the presence of the allelic
+variant in each one of the four homologous in both parents, \(P_1\) and
+\(P_2\).
+
+\hypertarget{reestimating-the-map-considering-genotyping-errors}{%
+\subsection{Reestimating the map considering genotyping
+errors}\label{reestimating-the-map-considering-genotyping-errors}}
+
+Though current technologies enabled the genotyping of thousands of SNPs,
+they are quite prone to genotyping errors, especially in polyploid
+species. One way to address this problem is to associate a probability
+distribution to each one of the markers and allow the HMM to update
+their probability. This procedure can be applied using either the
+probability distribution provided by the genotype calling software
+(loaded in \texttt{MAPpoly} using the function
+\texttt{read\_geno\_prob}) or assuming a global genotype error. For a
+detailed explanation of this procedure, please see
+\href{https://doi.org/10.1534/g3.119.400378}{Mollinari and Garcia,
+2019}. Briefly, the use of a prior information will update the genotype
+of the markers based on a global chromosome structure. In this tutorial,
+since we are analyzing the dosage data with no probability distribution
+associated, the second approch will be used.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lg3.map.error <-}\StringTok{ }\KeywordTok{est_full_hmm_with_global_error}\NormalTok{(}\DataTypeTok{input.map =}\NormalTok{ lg3.map, }\DataTypeTok{error =} \FloatTok{0.05}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(lg3.map.error)}
+\end{Highlighting}
+\end{Shaded}
+
+Notice that a global genotyping error of 5\% was used, and the resulting
+map was smaller than the previous one. Also, some markers were
+``attracted'' and some markers were ``repealed'' as a result of the
+smaller confidence used for each marker genotype.
+
+\hypertarget{reinserting-redundant-markers}{%
+\subsection{Reinserting redundant
+markers}\label{reinserting-redundant-markers}}
+
+As mentioned before, redundant markers are automatically removed during
+the analysis to reduce computational calculations. Besides that, one may
+want to see the genetic linkage maps considering all markers in the full
+dataset, including the redundant ones. The addition of redundant markers
+to a map can be done by just calling the function \texttt{update\_map}.
+Here we will show the addition in the previous map:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lg3.map.updated =}\StringTok{ }\KeywordTok{update_map}\NormalTok{(lg3.map)}
+\NormalTok{lg3.map}
+\NormalTok{lg3.map.updated}
+\end{Highlighting}
+\end{Shaded}
+
+As can be seen, both maps are identical except for the number of
+markers.
+
+\hypertarget{ordering-markers-using-mds-and-reestimating-the-map}{%
+\section{Ordering markers using MDS and reestimating the
+map}\label{ordering-markers-using-mds-and-reestimating-the-map}}
+
+So far the map was reestimated using the genomic order. In real
+situations, unless a genomic information is provided, the markers need
+to be ordered using an optimization technique. Here, we use the MDS
+(multidimensional scaling) algorithm, proposed in the context of genetic
+mapping by Preedy and Hackett (2016). The MDS algorithm requires a
+recombination fraction matrix, which will be transformed in distances
+using a mapping function (in this case the Haldane's mapping function).
+First, let us gather the pairwise recombination fractions for all three
+linkage groups:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mt <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(LGS, }\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{rf_list_to_matrix}\NormalTok{(x}\OperatorTok{$}\NormalTok{tpt))}
+\end{Highlighting}
+\end{Shaded}
+
+Now, for each matrix contained in the object \texttt{mt}, we use the MDS
+algorithm:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mds.ord <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(mt, mds_mappoly)}
+\end{Highlighting}
+\end{Shaded}
+
+Usually at this point, the user can make use of diagnostic plots to
+remove markers that are disturbing the ordering procedure. Here we
+didn't use that procedure, but we encourage the user to check the
+example in \texttt{?mds\_mappoly}. Now, let us compare the estimated and
+the genomic orders (feel free to run the last commented line and see
+interactive plots):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{LGS.mds<-}\KeywordTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, }\DecValTok{12}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{12}\NormalTok{)\{}
+\NormalTok{  lgtemp <-}\StringTok{ }\KeywordTok{make_seq_mappoly}\NormalTok{(mds.ord[[j]])}
+\NormalTok{  LGS.mds[[j]] <-}\StringTok{ }\KeywordTok{list}\NormalTok{(}\DataTypeTok{lg =}\NormalTok{ lgtemp, }
+      \DataTypeTok{tpt =} \KeywordTok{make_pairs_mappoly}\NormalTok{(all.rf.pairwise, }\DataTypeTok{input.seq =}\NormalTok{ lgtemp))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{geno.vs.mds <-}\StringTok{ }\OtherTok{NULL}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(LGS.mds))\{}
+\NormalTok{  geno.vs.mds<-}\KeywordTok{rbind}\NormalTok{(geno.vs.mds,}
+                     \KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{mrk.names =}\NormalTok{ LGS.mds[[i]]}\OperatorTok{$}\NormalTok{lg}\OperatorTok{$}\NormalTok{seq.mrk.names,}
+                                \DataTypeTok{mds.pos =} \KeywordTok{seq_along}\NormalTok{(LGS.mds[[i]]}\OperatorTok{$}\NormalTok{lg}\OperatorTok{$}\NormalTok{seq.mrk.names),}
+                                \DataTypeTok{genomic.pos =} \KeywordTok{order}\NormalTok{(LGS.mds[[i]]}\OperatorTok{$}\NormalTok{lg}\OperatorTok{$}\NormalTok{sequence.pos),}
+                                \DataTypeTok{LG =} \KeywordTok{paste0}\NormalTok{(}\StringTok{"LG_"}\NormalTok{, i)))}
+\NormalTok{\}}
+
+\KeywordTok{require}\NormalTok{(ggplot2)}
+\NormalTok{p<-}\KeywordTok{ggplot}\NormalTok{(geno.vs.mds, }\KeywordTok{aes}\NormalTok{(genomic.pos, mds.pos)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{alpha =} \DecValTok{1}\OperatorTok{/}\DecValTok{5}\NormalTok{, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{colour =}\NormalTok{ LG)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{LG) }\OperatorTok{+}\StringTok{  }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Genome Order"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Map Order"}\NormalTok{)}
+\NormalTok{p}
+\CommentTok{#plotly::ggplotly(p)}
+\end{Highlighting}
+\end{Shaded}
+
+Although several local inconsistencies occurred, the global diagonal
+pattern indicates a consistent order for all linkage groups using both
+approaches. Now, let us build the genetic map of linkage group 3 using
+the MDS order (remember that \textbf{this can take a while to finish}):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lg3.map.mds <-}\StringTok{ }\KeywordTok{est_rf_hmm_sequential}\NormalTok{(}\DataTypeTok{input.seq =}\NormalTok{ LGS.mds[[}\DecValTok{3}\NormalTok{]]}\OperatorTok{$}\NormalTok{lg,}
+                                \DataTypeTok{start.set =} \DecValTok{10}\NormalTok{,}
+                                \DataTypeTok{thres.twopt =} \DecValTok{10}\NormalTok{, }
+                                \DataTypeTok{thres.hmm =} \DecValTok{10}\NormalTok{,}
+                                \DataTypeTok{extend.tail =} \DecValTok{200}\NormalTok{,}
+                                \DataTypeTok{info.tail =} \OtherTok{TRUE}\NormalTok{, }
+                                \DataTypeTok{twopt =}\NormalTok{ LGS.mds[[}\DecValTok{3}\NormalTok{]]}\OperatorTok{$}\NormalTok{tpt,}
+                                \DataTypeTok{sub.map.size.diff.limit =} \DecValTok{10}\NormalTok{, }
+                                \DataTypeTok{phase.number.limit =} \DecValTok{20}\NormalTok{,}
+                                \DataTypeTok{reestimate.single.ph.configuration =} \OtherTok{TRUE}\NormalTok{,}
+                                \DataTypeTok{tol =} \FloatTok{10e-3}\NormalTok{,}
+                                \DataTypeTok{tol.final =} \FloatTok{10e-4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+And plot the map:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(lg3.map.mds)}
+\end{Highlighting}
+\end{Shaded}
+
+It is also possible to compare the maps using both genomic-based and
+MDS-based orders with the function \texttt{plot\_map\_list}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_map_list}\NormalTok{(}\KeywordTok{list}\NormalTok{(lg3.map, lg3.map.mds), }\DataTypeTok{col =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"blue"}\NormalTok{), }\DataTypeTok{title =} \StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The genomic-based map included the same number of markers but is smaller
+than the MDS-based map, which indicates a better result. To formally
+compare the maps, one needs to select the markers that are present in
+both maps. Interestingly enough, both procedures included the same
+markers in the final map; however, we provide the code to perform the
+comparison even if the maps share only a subset of markers:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mrks.in.gen<-}\KeywordTok{intersect}\NormalTok{(lg3.map}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{seq.num, lg3.map.mds}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{seq.num)}
+\NormalTok{mrks.in.mds<-}\KeywordTok{intersect}\NormalTok{(lg3.map.mds}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{seq.num, lg3.map}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{seq.num)}
+\ControlFlowTok{if}\NormalTok{(}\KeywordTok{cor}\NormalTok{(mrks.in.gen, mrks.in.mds) }\OperatorTok{<}\StringTok{ }\DecValTok{0}\NormalTok{)\{}
+\NormalTok{  mrks.in.mds <-}\StringTok{ }\KeywordTok{rev}\NormalTok{(mrks.in.mds)}
+\NormalTok{  lg3.map.mds <-}\StringTok{ }\KeywordTok{rev_map}\NormalTok{(lg3.map.mds)}
+\NormalTok{\}}
+\NormalTok{map.comp.}\FloatTok{3.}\NormalTok{gen<-}\KeywordTok{get_submap}\NormalTok{(}\DataTypeTok{input.map =}\NormalTok{ lg3.map, }\KeywordTok{match}\NormalTok{(mrks.in.gen, lg3.map}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{seq.num), }\DataTypeTok{verbose =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{map.comp.}\FloatTok{3.}\NormalTok{mds<-}\KeywordTok{get_submap}\NormalTok{(}\DataTypeTok{input.map =}\NormalTok{ lg3.map.mds, }\KeywordTok{match}\NormalTok{(mrks.in.mds, lg3.map.mds}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{seq.num), }\DataTypeTok{verbose =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{prob.}\FloatTok{3.}\NormalTok{gen<-}\KeywordTok{extract_map}\NormalTok{(lg3.map)}
+\NormalTok{prob.}\FloatTok{3.}\NormalTok{mds<-}\KeywordTok{extract_map}\NormalTok{(lg3.map.mds)}
+\KeywordTok{names}\NormalTok{(prob.}\FloatTok{3.}\NormalTok{gen)<-map.comp.}\FloatTok{3.}\NormalTok{gen}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{seq.num}
+\KeywordTok{names}\NormalTok{(prob.}\FloatTok{3.}\NormalTok{mds)<-map.comp.}\FloatTok{3.}\NormalTok{mds}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{seq.num}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{matplot}\NormalTok{(}\KeywordTok{t}\NormalTok{(}\KeywordTok{data.frame}\NormalTok{(prob.}\FloatTok{3.}\NormalTok{gen,prob.}\FloatTok{3.}\NormalTok{mds[}\KeywordTok{names}\NormalTok{(prob.}\FloatTok{3.}\NormalTok{gen)])), }
+        \DataTypeTok{type=}\StringTok{"b"}\NormalTok{, }\DataTypeTok{pch=}\StringTok{"_"}\NormalTok{, }\DataTypeTok{col=}\DecValTok{1}\NormalTok{, }\DataTypeTok{lty=}\DecValTok{1}\NormalTok{, }\DataTypeTok{lwd =} \FloatTok{.5}\NormalTok{, }\DataTypeTok{xlab=} \StringTok{""}\NormalTok{, }
+        \DataTypeTok{ylab=}\StringTok{"Marker position (cM)"}\NormalTok{, }\DataTypeTok{axes =}\NormalTok{ F)}
+\KeywordTok{axis}\NormalTok{(}\DecValTok{2}\NormalTok{)}
+\KeywordTok{mtext}\NormalTok{(}\DataTypeTok{text =} \KeywordTok{round}\NormalTok{(map.comp.}\FloatTok{3.}\NormalTok{gen}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{loglike,}\DecValTok{1}\NormalTok{), }\DataTypeTok{side =} \DecValTok{1}\NormalTok{, }\DataTypeTok{adj =} \DecValTok{0}\NormalTok{)}
+\KeywordTok{mtext}\NormalTok{(}\DataTypeTok{text =} \KeywordTok{round}\NormalTok{(map.comp.}\FloatTok{3.}\NormalTok{mds}\OperatorTok{$}\NormalTok{maps[[}\DecValTok{1}\NormalTok{]]}\OperatorTok{$}\NormalTok{loglike,}\DecValTok{1}\NormalTok{), }\DataTypeTok{side =} \DecValTok{1}\NormalTok{, }\DataTypeTok{adj =} \DecValTok{1}\NormalTok{)}
+\KeywordTok{mtext}\NormalTok{(}\DataTypeTok{text =} \StringTok{"Genomic"}\NormalTok{, }\DataTypeTok{side =} \DecValTok{3}\NormalTok{, }\DataTypeTok{adj =} \DecValTok{0}\NormalTok{)}
+\KeywordTok{mtext}\NormalTok{(}\DataTypeTok{text =} \StringTok{"MDS"}\NormalTok{, }\DataTypeTok{side =} \DecValTok{3}\NormalTok{, }\DataTypeTok{adj =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Please notice that these maps have the same local inversions shown in
+the dot plots presented earlier. In this case, the log-likelihood of the
+genomic order is higher than the one obtained using the MDS order. For
+this linkage group, the genomic-based map was chosen as the best one.
+
+\hypertarget{parallel-map-construction}{%
+\section{Parallel map construction}\label{parallel-map-construction}}
+
+\hypertarget{using-one-core-by-lg}{%
+\subsection{Using one core by LG}\label{using-one-core-by-lg}}
+
+Now, the mapping procedure will be applied to all linkage groups using
+parallelization. Although users must be encouraged to compare both MDS
+and genomic orders following the previous example, the genomic order
+will be considered as an example (remember that this step will take a
+\textbf{long time} to run):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## Performing parallel computation}
+\NormalTok{my.phase.func<-}\ControlFlowTok{function}\NormalTok{(X)\{}
+\NormalTok{  x<-}\KeywordTok{est_rf_hmm_sequential}\NormalTok{(}\DataTypeTok{input.seq =}\NormalTok{ X}\OperatorTok{$}\NormalTok{lg,}
+                                \DataTypeTok{start.set =} \DecValTok{10}\NormalTok{,}
+                                \DataTypeTok{thres.twopt =} \DecValTok{10}\NormalTok{, }
+                                \DataTypeTok{thres.hmm =} \DecValTok{10}\NormalTok{,}
+                                \DataTypeTok{extend.tail =} \DecValTok{200}\NormalTok{,}
+                                \DataTypeTok{info.tail =} \OtherTok{TRUE}\NormalTok{, }
+                                \DataTypeTok{twopt =}\NormalTok{ X}\OperatorTok{$}\NormalTok{tpt,}
+                                \DataTypeTok{sub.map.size.diff.limit =} \DecValTok{8}\NormalTok{, }
+                                \DataTypeTok{phase.number.limit =} \DecValTok{10}\NormalTok{,}
+                                \DataTypeTok{reestimate.single.ph.configuration =} \OtherTok{TRUE}\NormalTok{,}
+                                \DataTypeTok{tol =} \FloatTok{10e-3}\NormalTok{,}
+                                \DataTypeTok{tol.final =} \FloatTok{10e-4}\NormalTok{)}
+  \KeywordTok{return}\NormalTok{(x)}
+\NormalTok{\}}
+\KeywordTok{system.time}\NormalTok{(\{}
+\NormalTok{  cl <-}\StringTok{ }\NormalTok{parallel}\OperatorTok{::}\KeywordTok{makeCluster}\NormalTok{(n.cores)}
+\NormalTok{  parallel}\OperatorTok{::}\KeywordTok{clusterEvalQ}\NormalTok{(cl, }\KeywordTok{require}\NormalTok{(mappoly))}
+\NormalTok{  parallel}\OperatorTok{::}\KeywordTok{clusterExport}\NormalTok{(cl, }\StringTok{"dat.dose.filt"}\NormalTok{)}
+\NormalTok{  MAPs <-}\StringTok{ }\NormalTok{parallel}\OperatorTok{::}\KeywordTok{parLapply}\NormalTok{(cl,LGS,my.phase.func)}
+\NormalTok{  parallel}\OperatorTok{::}\KeywordTok{stopCluster}\NormalTok{(cl)}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+A traditional linkage map plot can be generated including all linkage
+groups, using the function \texttt{plot\_map\_list}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_map_list}\NormalTok{(MAPs, }\DataTypeTok{col =} \StringTok{"ggstyle"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Following the reconstruction of LG 3 shown before, let us consider a
+global genotyping error of 5\% to reestimate the final maps:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.error.func<-}\ControlFlowTok{function}\NormalTok{(X)\{}
+\NormalTok{  x<-}\KeywordTok{est_full_hmm_with_global_error}\NormalTok{(}\DataTypeTok{input.map =}\NormalTok{ X, }
+                                    \DataTypeTok{error =} \FloatTok{0.05}\NormalTok{, }
+                                    \DataTypeTok{tol =} \FloatTok{10e-4}\NormalTok{, }
+                                    \DataTypeTok{verbose =} \OtherTok{FALSE}\NormalTok{)}
+  \KeywordTok{return}\NormalTok{(x)}
+\NormalTok{\}}
+\KeywordTok{system.time}\NormalTok{(\{}
+\NormalTok{  cl <-}\StringTok{ }\NormalTok{parallel}\OperatorTok{::}\KeywordTok{makeCluster}\NormalTok{(n.cores)}
+\NormalTok{  parallel}\OperatorTok{::}\KeywordTok{clusterEvalQ}\NormalTok{(cl, }\KeywordTok{require}\NormalTok{(mappoly))}
+\NormalTok{  parallel}\OperatorTok{::}\KeywordTok{clusterExport}\NormalTok{(cl, }\StringTok{"dat.dose.filt"}\NormalTok{)}
+\NormalTok{  MAP.err <-}\StringTok{ }\NormalTok{parallel}\OperatorTok{::}\KeywordTok{parLapply}\NormalTok{(cl,MAPs,my.error.func)}
+\NormalTok{  parallel}\OperatorTok{::}\KeywordTok{stopCluster}\NormalTok{(cl)}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+Comparing both results:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all.MAPs <-}\StringTok{ }\OtherTok{NULL}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{12}\NormalTok{) }
+\NormalTok{  all.MAPs<-}\KeywordTok{c}\NormalTok{(all.MAPs, MAPs[i], MAP.err[i])}
+\KeywordTok{plot_map_list}\NormalTok{(}\DataTypeTok{map.list =}\NormalTok{ all.MAPs, }\DataTypeTok{col =} \KeywordTok{rep}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\StringTok{"#E69F00"}\NormalTok{, }\StringTok{"#56B4E9"}\NormalTok{), }\DecValTok{12}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+Then, the map that included modeling of genotype errors was chosen as
+the best one.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot_map_list}\NormalTok{(MAP.err)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{map-summary}{%
+\subsection{Map summary}\label{map-summary}}
+
+After building two or more maps, one may want to compare summary
+statistics of those maps regarding the same chromosome, or even across
+chromosomes. A brief comparison can be done using the function
+\texttt{summary\_maps}, which generates a table containing these
+statistics based on a list of \texttt{mappoly.map} objects:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(}\KeywordTok{summary_maps}\NormalTok{(MAPs))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{genotype-conditional-probabilities}{%
+\section{Genotype conditional
+probabilities}\label{genotype-conditional-probabilities}}
+
+In order to use the genetic map in
+\href{https://github.com/guilherme-pereira/QTLpoly}{QTLpoly}, one needs
+to obtain the conditional probability of all possible 36 genotypes along
+the 12 linkage groups for all individuals in the full-sib population.
+Let us use the function \texttt{calc\_genoprob\_error}, which similarly
+to \texttt{est\_full\_hmm\_with\_global\_error} allows the inclusion of
+a global genotyping error:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{genoprob.err <-}\StringTok{ }\KeywordTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, }\DecValTok{12}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{12}\NormalTok{)}
+\NormalTok{genoprob.err[[i]] <-}\StringTok{ }\KeywordTok{calc_genoprob_error}\NormalTok{(}\DataTypeTok{input.map =}\NormalTok{ MAP.err[[i]], }\DataTypeTok{error =} \FloatTok{0.05}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Here, a global genotyping error of 5\% was used. Each position of any
+object in the list \texttt{genoprob.err} contains two elements: an array
+of dimensions
+\(36 \times number \; of \; markers \times number \; of \; individuals\)
+and the position of the markers in the maps in centimorgans. Let us
+display the results for all linkage groups in individual 1:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ind <-}\StringTok{ }\DecValTok{1}
+\NormalTok{op <-}\StringTok{ }\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{, }\DecValTok{4}\NormalTok{), }\DataTypeTok{pty =} \StringTok{"s"}\NormalTok{, }\DataTypeTok{mar=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{)) }
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{12}\NormalTok{)}
+\NormalTok{\{}
+\NormalTok{  d <-}\StringTok{ }\NormalTok{genoprob.err[[i]]}\OperatorTok{$}\NormalTok{map}
+  \KeywordTok{image}\NormalTok{(}\KeywordTok{t}\NormalTok{(genoprob.err[[i]]}\OperatorTok{$}\NormalTok{probs[,,ind]),}
+        \DataTypeTok{col=}\NormalTok{RColorBrewer}\OperatorTok{::}\KeywordTok{brewer.pal}\NormalTok{(}\DataTypeTok{n=}\DecValTok{9}\NormalTok{ , }\DataTypeTok{name =} \StringTok{"YlOrRd"}\NormalTok{),}
+        \DataTypeTok{axes=}\OtherTok{FALSE}\NormalTok{,}
+        \DataTypeTok{xlab =} \StringTok{"Markers"}\NormalTok{,}
+        \DataTypeTok{ylab =} \StringTok{""}\NormalTok{,}
+        \DataTypeTok{main =} \KeywordTok{paste}\NormalTok{(}\StringTok{"LG"}\NormalTok{, i))}
+  \KeywordTok{axis}\NormalTok{(}\DataTypeTok{side =} \DecValTok{1}\NormalTok{, }\DataTypeTok{at =}\NormalTok{ d}\OperatorTok{/}\KeywordTok{max}\NormalTok{(d),}
+       \DataTypeTok{labels =}\KeywordTok{rep}\NormalTok{(}\StringTok{""}\NormalTok{, }\KeywordTok{length}\NormalTok{(d)), }\DataTypeTok{las=}\DecValTok{2}\NormalTok{)}
+\NormalTok{\}}
+\KeywordTok{par}\NormalTok{(op)}
+\end{Highlighting}
+\end{Shaded}
+
+In this figure, the x-axis represents the genetic map and the y-axis
+represents the 36 possible genotypes in the full-sib population. The
+color scale varies from dark purple (high probabilities) to light yellow
+(low probabilities). With the conditional probabilities computed, it is
+possible to use the object \texttt{genoprob.err} alongside with
+phenotypic data as the input of the software
+\href{https://github.com/guilherme-pereira/QTLpoly}{QTLpoly}, which is
+an under development software to map multiple QTLs in full-sib families
+of outcrossing autopolyploid species.
+
+\hypertarget{obtaining-individual-haplotypes}{%
+\section{Obtaining individual
+haplotypes}\label{obtaining-individual-haplotypes}}
+
+Once ready, the genotypic conditional probabilities can be used to
+recover any individual haplotype given the map (details described in
+Mollinari et al. (2020)). To generate this information, one may use the
+function \texttt{calc\_homoprob} to account for the probabilities of
+each homologous, in all map positions for each individual. For example,
+let us view the homologous probabilities for chromosome 1 and individual
+10:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{homoprobs =}\StringTok{ }\KeywordTok{calc_homoprob}\NormalTok{(genoprob.err)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(homoprobs, }\DataTypeTok{lg =} \DecValTok{1}\NormalTok{, }\DataTypeTok{ind =} \DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Using this graphic, it is possible to identify regions of crossing-over
+occurrence, represented by the inversion of probability magnitudes
+between homologous from the same parent. It is also possible to view all
+chromosomes at the same time for any individual by setting the parameter
+\texttt{lg\ =\ "all"}. One may use this information to evaluate the
+quality of the map and repeat some processes with modifications, if
+necessary.
+
+\hypertarget{evaluating-the-meiotic-process}{%
+\section{Evaluating the meiotic
+process}\label{evaluating-the-meiotic-process}}
+
+MAPpoly also handles a function to evaluate the meiotic process that
+guided gamete formation on the studied population. Given genotype
+conditional probabilities, one may want to account for homologous
+pairing probabilities and detect the occurrence of preferential pairing,
+which is possible through the function
+\texttt{calc\_prefpair\_profiles}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{prefpairs =}\StringTok{ }\KeywordTok{calc_prefpair_profiles}\NormalTok{(genoprob.err)}
+\end{Highlighting}
+\end{Shaded}
+
+The function returns an object of class
+\texttt{mappoly.prefpair.profiles}, which was saved as
+\texttt{prefpairs}. This object handles all information necessary to
+study pairing, such as the probability for each pairing configuration
+(\(\psi\); see Mollinari and Garcia, 2019) inside each parent. For a
+more user-friendly visualization of the results, one may want to look at
+the \texttt{plot} output:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(prefpairs)}
+\CommentTok{#save.image("all.analysis.rda")}
+\end{Highlighting}
+\end{Shaded}
+
+This graphic shows information about all pairing configurations and
+their probabilities, the proportion of bivalent/multivalent pairing, and
+also the p-value for preferential pairing test for all markers inside
+each parent.
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\leavevmode\hypertarget{ref-Mollinari2019}{}%
+Mollinari, Marcelo, and Antonio Augusto Franco Garcia. 2019. ``Linkage
+Analysis and Haplotype Phasing in Experimental Autopolyploid Populations
+with High Ploidy Level Using Hidden Markov Models.'' \emph{G3: Genes,
+Genomes, Genetics} 9 (10): 3297--3314.
+
+\leavevmode\hypertarget{ref-Mollinari2020}{}%
+Mollinari, Marcelo, Bode A Olukolu, Guilherme da S Pereira, Awais Khan,
+Dorcus Gemenet, G Craig Yencho, and Zhao-Bang Zeng. 2020. ``Unraveling
+the Hexaploid Sweetpotato Inheritance Using Ultra-Dense Multilocus
+Mapping.'' \emph{G3: Genes, Genomes, Genetics} 10 (1): 281--92.
+
+\leavevmode\hypertarget{ref-Pereira2020}{}%
+Pereira, Guilherme da Silva, Dorcus C. Gemenet, Marcelo Mollinari, Bode
+Olukolu, Federico Diaz, Veronica Mosquera, Wolfgang Gruneberg, Awais
+Khan, Craig Yencho, and and Zhao-Bang Zeng. 2020. ``Multiple Qtl Mapping
+in Autopolyploids: A Random-Effect Model Approach with Application in a
+Hexaploid Sweetpotato Full-Sib Population.'' \emph{In Press}, no.
+https://www.biorxiv.org/content/10.1101/622951v1.
+
+\leavevmode\hypertarget{ref-Preedy2016}{}%
+Preedy, K. F., and C. A. Hackett. 2016. ``A Rapid Marker Ordering
+Approach for High-Density Genetic Linkage Maps in Experimental
+Autotetraploid Populations Using Multidimensional Scaling.''
+\emph{Theor. Appl. Genet.} 129 (11): 2117--32.
+\url{https://doi.org/10.1007/s00122-016-2761-8}.
+
+\end{document}
