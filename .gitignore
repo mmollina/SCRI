@@ -7,8 +7,10 @@
 *.rda
 # All rds data files
 *.rds
+# Rmarkdown files
+docs/sample*
 # huge vcf files
-data/sample*
+data/tetraploid_potato_files/*
 # output of parallel map contruction
 MAPpoly/output_map*
 # fitPoly dat files
@@ -37,3 +39,5 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 .DS_Store
+# 
+data/sample_*
