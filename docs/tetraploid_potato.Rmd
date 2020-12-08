@@ -25,9 +25,9 @@ knitr::opts_chunk$set(eval = TRUE)
 
 # Introduction
 
-Linkage maps are essential tools to several genetic endeavours such as quantitative trait loci (QTL) analysis, evolutionary studies, assessment of colinearity in chromosome-wise scale between genomes, and study of meiotic processes. The principle behind linkage map construction is detecting recombinant events between genomic positions and summarizing them into pairwise recombination fraction estimates. In diploids, the assessment of such a phenomenon is relatively straightforward. After the homolog duplication, sister chromatids pair up exchanging segments. The presence of informative markers, e. g. single nucleotide polymorphisms (SNPs) enable  computation of the recombination fraction between pairs of genomic positions by comparing the chromosome constitution of parents and offspring. If the order of markers is unknown, it can be obtained using the pairwise recombination fractions in conjunction with optimization algorithms.
+Linkage maps are essential tools in several genetic studies such as quantitative trait loci (QTL) analysis, understanding chromosomal evolutionary processes, assessment of collinearity between genomes, and study of meiotic processes. The principle behind linkage map construction is detecting recombinant events between genomic positions and summarizing them into pairwise recombination fractions. In diploids, the assessment of such a phenomenon is relatively straightforward. After the homolog duplication, sister chromatids pair up exchanging segments. The presence of informative markers, e. g. single nucleotide polymorphisms (SNPs) enable estimating the recombination fraction between pairs of genomic positions by comparing the chromosome constitution of parents and offspring.
 
-In polyploids (species with more than two sets of homolog chromosomes, or homologs), the construction of such maps is quite challenging. While in diploids a biallelic marker can be fully informative, in polyploids they allow accounting for proportions of biallelic dosages. To recover the multiallelic information present in polyploid species, we need to account for recombination frequencies, estimate phase configurations and reconstruct the haplotypes of both parents and individuals in the population. As the ploidy level increases, the joint computation of genomic regions becomes intensive, and other approaches such as dimension reduction need to be applied.
+In polyploids (species with more than two sets of homolog chromosomes, or homologs), the construction of such maps is more challenging. While in diploids a biallelic marker is fully informative to distinguish between both alleles present in a pair of homologs, in polyploids they allow accounting for proportions of allelic dosages. The limited information imposed by this system makes the assessment of recombination events during the meiosis troublesome, specially as the ploidy level gets larger. To recover the multiallelic information present in polyploid species, we need to account for recombination frequencies, estimate phase configurations and reconstruct the haplotypes of both parents and individuals in the population. 
 
 <!-- Building genetic linkage maps is one of the leading steps for genetic studies of any species of interest. Due to its high informativity, genetic maps provide knowledge about the physical distance between markers (independent of non-physical factors) and their linkage phases, and also allows studies about genotype-phenotype association (such as QTL mapping), study of the genetic architecture of important traits, study of evolutionary processes, helps to assemble reference genomes, and so on.
 
@@ -39,21 +39,18 @@ Building genetic linkage maps for polyploid organisms also involves estimation o
 
 MAPpoly is an under development R package that allows building genetic linkage maps for autopolyploids with even ploidy levels. In its current version, MAPpoly can handle ploidy levels up to 8x when using the HMM approach, and up to 12x when using the two-point approach. All two-point-based functions can be run on standard computers, but we strongly recommend the use of high performance computers for HMM-based functions.-->
 
-`MAPpoly` is an R package fully capable of building genetic linkage maps for biparental populations in polyploid species with ploidy level up to 8x. 
-This package is part of the [Genomic Tools for Sweetpotato Improvement](https://sweetpotatogenomics.cals.ncsu.edu/) (GT4SP), funded by [Bill and Melinda Gates Foundation](https://www.gatesfoundation.org/). All of the procedures presented in this document are detailed in @Mollinari2019 and @Mollinari2020. The results obtained with `MAPpoly` can be readily used for QTL mapping with the [QTLpoly package](https://github.com/guilherme-pereira/QTLpoly), which implements the procedures proposed by @Pereira2020.
+`MAPpoly` is an R package fully capable of building genetic linkage maps for biparental populations in polyploid species with ploidy level up to 8x. It was developed as part of the [Genomic Tools for Sweetpotato Improvement](https://sweetpotatogenomics.cals.ncsu.edu/) (GT4SP), funded by [Bill and Melinda Gates Foundation](https://www.gatesfoundation.org/). All of the statistical procedures used in the functions presented in this document are detailed in @Mollinari2019 and @Mollinari2020. The results obtained with `MAPpoly` can be readily used for QTL mapping with the [QTLpoly package](https://github.com/guilherme-pereira/QTLpoly), which implements the procedures proposed by @Pereira2020.
 
-Some advantages of `MAPpoly` are:
+Some characteristics of `MAPpoly` (v 0.2.1)
 
-- Can handle multiple dataset types
-- Can handle thousands of markers
-- Does not depend on single-dose markers (SDM) to build the map
+- Can handle [multiple dataset types](#datasets)
+- Can handle a large number of markers. See [this publication](https://doi.org/10.1534/g3.119.400620) for an example of ~30,000 SNPs in hexaploid sweetpotato.
 - Incorporates genomic information
-- Explores multipoint information (through Hidden Markov Chain Model)
-- Can handle high ploidies: up to 8x when using HMM, and up to 12x when using the two-point approach
+- Explores multipoint information (through Hidden Markov Model)
 - Can reconstruct haplotypes for parents and all individuals in the population
 - Recovers the multiallelic nature of polyploid genomes
 - Detects occurrence, location and frequency of multivalent pairing during meiosis
-- Robust enough to build genetic linkage maps with multiallelic markers (when available)
+- Robust enough to build genetic linkage maps with multiallelic markers (when available - see function [merge_maps](https://www.rdocumentation.org/packages/mappoly/versions/0.2.0/topics/merge_maps))
 
 ## `MAPpoly` installation
 
@@ -80,11 +77,9 @@ To install MAPpoly from Git Hub use
 ```R
 devtools::install_github("mmollina/mappoly", dependencies=TRUE)
 ```
-
-# Loading datasets
+# Loading datasets {#datasets}
 
 In its current version, MAPpoly can handle the following types of datasets:
-
 1. CSV files 
 2. MAPpoly files
     - Dosage based
@@ -104,7 +99,7 @@ Both CSV and `MAPpoly` datasets are sensible to formatting errors, such as addit
 
 ## Reading CSV files
 
-The preparation of a CSV file for MAPpoly is relatively straightforward. It can be done in Microsoft Excel or any other spreadsheet software of your preference.  In this file, each line comprehends a marker and each column comprehends information about the marker. In its current version, `MAPpoly` can handle .csv files with allelic dosage data. 
+The preparation of a CSV file for MAPpoly can be done in Microsoft Excel or any other spreadsheet software of your preference.  In this file, each line contains a marker and each column contains information about the marker. In its current version, `MAPpoly` can handle .csv files with allelic dosage data. 
 
 The first line of the CSV file should contain headers for all columns. The first five columns should include the following information: marker name, dosage for both parents (one column for each), a sequence number (e.g. a chromosome number, if available) and a sequence position (e.g. the marker position within the chromosome, if available). In addition to these five headers, you should include the name of all individuals in the population. From the second line onwards, all columns should contain its values, including allelic dosages for all individuals. Missing or absent values should be represented by NA.
 
@@ -116,23 +111,19 @@ Example:
 knitr::include_graphics("https://raw.githubusercontent.com/mmollina/MAPpoly_vignettes/master/vignette_tetraploid/image/csv.png")
 ```
 
-**Important note: avoid spaces in .csv files.** As mentioned above, please double check your datasets for extra spaces, commas, dots and encoding. Your CSV file should be encoded using UTF-8.
-
 You can read CSV files with the `read_geno_csv` function:
 
 ```{r load_csv_file}
-ft="https://raw.githubusercontent.com/mmollina/SCRI/main/data/B2721_dose.csv"
+## Download CSV file from GitHub
+ft <- "https://raw.githubusercontent.com/mmollina/SCRI/main/data/B2721_dose.csv"
 tempfl <- tempfile()
 download.file(ft, destfile = tempfl)
+## Reading CSV file
 dat.dose.csv <- read_geno_csv(file.in  = tempfl, ploidy = 4)
 unlink(tempfl)
 ```
 
-``` r
-dat.dose.csv
-```
-
-In addition to the CSV file path, you must indicate the ploidy level using the `ploidy` argument. This function automatically excludes uninformative markers. It also performs chi-square tests for all markers, considering the expected segregation under Mendelian inheritance, random chromosome pairing and no double reduction. You can optionally use the `filter.non.conforming` logical argument (default = TRUE), which excludes non-expected genotypes under these assumptions. However, keep in mind that the linkage analysis functions in MAPpoly do not support double-reduction in its current version, and this can cause software failures.
+In addition to the CSV file path, you must indicate the ploidy level using the `ploidy` argument. This function automatically excludes uninformative markers. It also performs chi-square tests for all markers, considering the expected segregation under Mendelian inheritance, random chromosome pairing and no double reduction. You can optionally use the `filter.non.conforming` logical argument (default = `TRUE`), which excludes non-expected genotypes under these assumptions. However, keep in mind that the linkage analysis functions in MAPpoly do not support double-reduction and this can cause software failures.
 
 ## Reading MAPpoly files
 
@@ -194,20 +185,18 @@ geno------------------------
 Then, use the `read_geno` function to read your file:
 
 ```{r load_dose_file}
+## Download dataset from GitHub
 fl = "https://raw.githubusercontent.com/mmollina/SCRI/main/data/B2721_mappoly_dose"
 tempfl <- tempfile()
 download.file(fl, destfile = tempfl)
+## Reading 
 dat.dose.mpl <- read_geno(file.in  = tempfl, elim.redundant = TRUE)
 unlink(tempfl)
 ```
 
-``` r
-dat.dose.mpl
-```
-
 ### Using `read_geno_prob`
 
-Following the same header described before, `read_geno_prob` reads a table containing the probability distribution for each combination of marker $\times$ individual. Each line on this table represents the combination of one marker with one individual, and its respective probabilities of having each possible allele dosage. The first two columns represent the marker and the individual, respectively, and the remaining elements represent the probability associated with each one of the possible dosages, as follows:
+Following the same header described before, `read_geno_prob` reads a table containing the probability distribution for each combination of marker $\times$ individual. Each line on this table represents the combination of one marker with one individual, and the respective probabilities. The first two columns represent the marker and the individual, respectively, and the remaining elements represent the probability associated with each one of the possible dosages
 
 | Marker | Individual | $p(d=0)$ | $p(d=1)$ | $p(d=2)$ | $p(d=3)$ | $p(d=4)$ |
 |--------|:----------:|:--------:|:--------:|:--------:|:--------:|:--------:|
@@ -227,7 +216,7 @@ Following the same header described before, `read_geno_prob` reads a table conta
 | M4     | Ind3       | 0.0      | 0.1      | 0.9      | 0.0      | 0.0      |
 | M5     | Ind3       | 0.1      | 0.9      | 0.0      | 0.0      | 0.0      |
 
-Notice that each marker $\times$ individual combination have $m+1$ associated probabilities, being $m$ the ploidy level and $m+1$ the number of possible allele dosages. Also, each line must sum to 1. The final file (header + table) should look like the following example:
+Notice that each marker $\times$ individual combination have $ploidy + 1$ probabilities, i.e., from zero to ploidy level. Also, each line must sum to 1. The final file (header + table) should look like the following example:
 
 ```
 ploidy 4
@@ -259,50 +248,48 @@ M4 Ind3 0.0 0.1 0.9 0.0 0.0
 M5 Ind3 0.1 0.9 0.0 0.0 0.0
 ```
 
-To read the dataset, one should use:
+To read the dataset use 
 
 ```{r load_data_w_probs}
+## Download dataset from GitHub
 ft="https://raw.githubusercontent.com/mmollina/SCRI/main/data/B2721_mappoly_prob"
 tempfl <- tempfile()
 download.file(ft, destfile = tempfl)
+## Reading
 dat.prob.mpl <- read_geno_prob(file.in  = tempfl, prob.thres = 0.95, elim.redundant = TRUE)
 unlink(tempfl)
 ```
-
-``` r
-dat.prob.mpl
-```
-
 **Important note:** as this type of file contains the probability distribution of all possible dosages and it will take longer to read. 
 
-You can define the minimum probability value necessary to call a dosage using the `prob.thres` argument. If the higher probability for a marker $\times$ individual passes this threshold, then its associated dosage is used. However, if none of the probabilities reach this threshold, then its dosage is considered missing (NA). It also perform the same filtering described for function [`read_geno`](#read_geno) 
+You can define the minimum probability value necessary to call a dosage using the `prob.thres` argument. If the higher probability for a marker and individual passes this threshold, then its associated dosage is used. However, if none of the probabilities reach this threshold, then its dosage is considered missing (NA). Function `read_geno_prob` also performs the same filtering described in [`read_geno`](#read_geno) 
 
 ## Reading VCF files {#read_vcf}
 
-`MAPpoly` can also handle VCF files (>= V.4.0) generated by the most softwares, such as TASSEL, GATK, and Stacks. As few of these softwares can handle poliploidy and estimate genotypes in a satisfactory manner, you may use other softwares developed to estimate the allele dosages. Briefly, these programs use the allele read counts (or intensity) for each marker $\times$ individual combination, and determines which is the most likely allele dosage. Examples of these softwares are [SuperMASSA](http://statgen.esalq.usp.br/SuperMASSA/), [fitPoly](https://cran.r-project.org/web/packages/fitPoly/index.html), [ClusterCall](https://potatobreeding.cals.wisc.edu/wp-content/uploads/sites/161/2017/08/ClusterCall_Download.zip), [updog](https://cloud.r-project.org/web/packages/updog/index.html), and  [PolyRAD](https://cran.r-project.org/web/packages/polyRAD/vignettes/polyRADtutorial.html). After allele dosage estimation, your VCF file should contain values for the field GT similar to **1/1/1/0** (a triplex marker in an autotetraploid, for example) rather than **1/0**. Since `MAPpoly` uses dosages (or their probabilities) to build genetic maps, we strongly recommend using softwares to estimate such dosages before building the map. `fitPoly`, `PolyRAD`, and `updog` have direct integration with `MAPpoly`, as will be described in the next sections.
+`MAPpoly` can also handle VCF files (>= V.4.0) generated by the most programs, such as TASSEL, GATK, and Stacks. As few of them can handle poliploidy and estimate genotypes in a satisfactory manner, you may use other tools specifically developed to estimate allele dosages. Briefly, these programs use the allele read counts (or intensity) for each marker $\times$ individual combination, and determines which is the most likely allele dosage. Examples are [SuperMASSA](http://statgen.esalq.usp.br/SuperMASSA/), [fitPoly](https://cran.r-project.org/web/packages/fitPoly/index.html), [ClusterCall](https://potatobreeding.cals.wisc.edu/wp-content/uploads/sites/161/2017/08/ClusterCall_Download.zip), [updog](https://cloud.r-project.org/web/packages/updog/index.html), and  [PolyRAD](https://cran.r-project.org/web/packages/polyRAD/vignettes/polyRADtutorial.html). After allele dosage estimation, your VCF file should contain values for the field GT similar to **1/1/1/0** (a triplex marker in an autotetraploid, for example) rather than **1/0**. Since `MAPpoly` uses dosages (or their probabilities) to build genetic maps, we strongly recommend using programs capable of estimating dosages before building the map. `fitPoly`, `PolyRAD`, and `updog` have direct integration with `MAPpoly`, as will be described in the next sections.
 
-To demonstrate the `read_vcf` function, lets download an autohexaploid sweetpotato VCF file from the MAPpoly's vignettes repository on Github and read it:
+To demonstrate the `read_vcf` function, let us download an autohexaploid sweetpotato VCF file from the `MAPpoly's` vignettes repository on Github and read it:
 
 ```{r load_vcf_data}
-download.file("https://github.com/mmollina/MAPpoly_vignettes/raw/master/data/BT/sweetpotato_chr1.vcf.gz", destfile = 'chr1.vcf.gz')
-dat.dose.vcf = read_vcf(file = 'chr1.vcf.gz', parent.1 = "PARENT1", parent.2 = "PARENT2", verbose = FALSE)
-```
-
-``` r
-dat.dose.vcf
+## Download dataset from GitHub
+ft <- "https://github.com/mmollina/MAPpoly_vignettes/raw/master/data/BT/sweetpotato_chr1.vcf.gz"
+tempfl <- tempfile()
+download.file(ft, destfile = tempfl)
+## Reading
+dat.dose.vcf <- read_vcf(file = tempfl, parent.1 = "PARENT1", parent.2 = "PARENT2", verbose = FALSE)
+unlink(tempfl)
 ```
 
 Besides the path to your VCF file, you should indicate `parent.1` and `parent.2` names. Parent names must be exactly the same strings as in the VCF file. The ploidy level will be automatically detected, but you may indicate it using the optional `ploidy` argument. With this argument, the function will check for possible errors in your dataset. For species with variable ploidy levels (i.e. sugarcane), please indicate the desired ploidy level using the `ploidy` argument; if absent, `MAPpoly` will use the smallest ploidy level detected. 
 
-This function also has options to filter out undesired markers or data points, such as those with low depth or high proportion of missing data. You can define the following filter arguments: set `min.av.depth` to any integer level in order to remove markers that show average depth below this value (default = 0); set `min.gt.depth` to any integer level in order to remove data points that present depth below this value (default = 0); set `max.missing` to any value between 0 and 1 in order to remove markers that present missing data proportion above this value (default = 1). `read_vcf` also perform the same filtering described for function [`read_geno`](#read_geno). The p-value threshold used by the segregation test can be defined by the `thresh.line` argument.
-
-Please notice that the returning object from `read_vcf` has some additional information when compared to previous functions: reference and alternative alleles (bases) for each marker; and average depth of each marker. You can inspect all marker depths using the following code as an example:
+This function also has options to filter out undesired markers or data points, such as those with low depth or high proportion of missing data. You can define the following filter arguments: set `min.av.depth` to remove markers with average depth below the provided value (default = 0); set `min.gt.depth` to remove data points that present depth below the provided (default = 0); set `max.missing` to any value between 0 and 1 in order to remove markers that present missing data proportion above this value (default = 1). `read_vcf` also perform the same filtering described for function [`read_geno`](#read_geno). Object generated by `read_vcf` has some additional information when compared to previous functions: reference and alternative alleles (bases) for each marker; and average depth of each marker. You can inspect all marker depths using the following code as an example:
 
 ```{r inspect_depth}
 library(ggplot2)
 dosage_combs = cbind(dat.dose.vcf$dosage.p, dat.dose.vcf$dosage.q)
-dc_simplex = apply(dosage_combs,1,function(x) if(all(c(0,1) %in% x) | all(c(dat.dose.vcf$m-1, dat.dose.vcf$m) %in% x)) return(TRUE) else return(FALSE))
-dc_dsimplex = apply(dosage_combs,1,function(x) if(all(x == c(1,1)) | all(x == c(dat.dose.vcf$m-1, dat.dose.vcf$m-1))) return(TRUE) else return(FALSE))
+dc_simplex = apply(dosage_combs,1,function(x) if(all(c(0,1) %in% x) | 
+                                                 all(c(dat.dose.vcf$m-1, dat.dose.vcf$m) %in% x)) return(TRUE) else return(FALSE))
+dc_dsimplex = apply(dosage_combs,1,function(x) if(all(x == c(1,1)) | 
+                                                  all(x == c(dat.dose.vcf$m-1, dat.dose.vcf$m-1))) return(TRUE) else return(FALSE))
 
 dc_simplex[which(dc_simplex == TRUE)] = "simplex"
 dc_simplex[which(dc_dsimplex == TRUE)] = 'double simplex'
@@ -317,12 +304,9 @@ ggplot(data_depths, aes(fill=`Dosage combinations`, x=`Depth classes`, y=`Marker
   scale_x_continuous(breaks=0:5, labels=c("[0,200)","[200,300)","[300,400)","[400,500)","[500,600)", "> 600"))
 ```
 
+## Importing data from `fitPoly`
 
-## Importing data from third party packages
-
-### `fitPoly`
-
-You can export datasets generated using the `fitPoly` package using
+You can export datasets generated by `fitPoly` package using
 
 ```{r load_from_fitpoly}
 ## Downloading and reading B2721 fitPoly's probabilistic scores
@@ -338,13 +322,13 @@ dat <- read_fitpoly(file.in = "B2721_scores.dat",
                     verbose = TRUE)
 ```
 
-The input file should be generated using the function [`fitPoly::saveMarkerModels`](https://www.rdocumentation.org/packages/fitPoly/versions/3.0.0/topics/saveMarkerModels). [Here](https://github.com/mmollina/SCRI/blob/main/data/fitpoly_tetra_call/B2721_fitpoly_call.R) is an example of genotype calling using `saveMarkerModels`. You can also, if available, include the genome information in the dataset. [Here](https://github.com/mmollina/SCRI/blob/main/MAPpoly/get_solcap_snp_pos.R) is an example of including the _Solanum tuberosum_ genome v4.03 information.
+The input file should be generated using the function [`fitPoly::saveMarkerModels`](https://www.rdocumentation.org/packages/fitPoly/versions/3.0.0/topics/saveMarkerModels). [Here](https://github.com/mmollina/SCRI/blob/main/data/fitpoly_tetra_call/B2721_fitpoly_call.R) is an example of genotype calling using `saveMarkerModels`. If available, you can also include genome information in the dataset. [Here](https://github.com/mmollina/SCRI/blob/main/MAPpoly/get_solcap_snp_pos.R) is an example of including the _Solanum tuberosum_ genome v4.03 information.
 
-```{r, adding_genome_info}
+```{r, adding_genome_info, echo=FALSE, results=FALSE}
 source("https://raw.githubusercontent.com/mmollina/SCRI/main/MAPpoly/get_solcap_snp_pos.R")
 ```
 
-### `PolyRAD`
+## Importing data from `PolyRAD`
 
 The R package `PolyRAD` has its own function to export genotypes to the `MAPpoly`'s genotype probability distribution format. One may use the commands above to import from `PolyRAD`:
 
@@ -368,9 +352,9 @@ mydata_polyrad = read_geno_prob(outfile2)
 mydata_polyrad
 ```
 
-### `updog`
+## Importing data from `updog`
 
-You can also use the `MAPpoly`'s function `import_from_updog` to import any dataset generated by `updog`'s function `multidog`, following the example below:
+You can use `MAPpoly`'s function `import_from_updog` to import any dataset generated by `updog`'s function `multidog`, following the example below:
 
 ```{r load_updog_data, results=FALSE}
 # Load example dataset from updog
@@ -386,15 +370,36 @@ mout = multidog(refmat = t(uitdewilligen$refmat),
 mydata_updog = import_from_updog(mout)
 ```
 
-``` r
-mydata_updog
+Notice that `updog` removes both sequence and sequence position information that may be present in the VCF file. We highly recommend the incorporation of this information during the linkage map building, when available.
+
+## Importing data from `polymapR`
+Besides genotype calling packages, `MAPpoly` also is capable to import datasets and **phased** maps from `polymapR`. This functionality can be important when the user already have their map constructed using `polymapR` and wanted to obtain the genotype conditional probabilities using the HMM-based approach to be used in further analysis, e.g., QTL mapping, haplotype reconstruction, meiotic studies, etc. To import the dataset, use the following code
+
+```{r import_polymapR_data, results=FALSE, fig.show = 'hide'}
+require(polymapR)
+data("screened_data3")
+mappoly.data <- import_data_from_polymapR(screened_data3, ploidy = 4)
+plot(mappoly.data)
 ```
 
-Please notice that `updog` removes both sequence and sequence position information that may be present in the VCF file. We highly recommend that you use this information during the linkage map building, when available.
+Now, let us import the phased map used as example in polymapR
+
+```{r, import_polymapR_map}
+data("integrated.maplist", "marker_assignments_P1","marker_assignments_P2")
+maplist <- create_phased_maplist(maplist = integrated.maplist,
+                                 dosage_matrix.conv = screened_data3,
+                                 marker_assignment.1=marker_assignments_P1,
+                                 marker_assignment.2=marker_assignments_P2,
+                                 ploidy = 4, verbose = FALSE)
+ mappoly.maplist <- import_phased_maplist_from_polymapR(maplist, mappoly.data)
+ plot_map_list(mappoly.maplist, col = "ggstyle")
+ ## plot a segment of phased map (from 0 to 20 cM)
+ plot(mappoly.maplist[[1]], mrk.names = TRUE, left.lim = 0, right.lim = 20, cex = .7)
+```
 
 ## Combining multiple datasets
 
-It is not rare to have two or more datasets from the same population or individuals from different sources of molecular data, such as SNP chips, GBS and/or microsatellites. `MAPpoly` can combine datasets when individual names are the same, using the function `merge_datasets`. To demonstrate its functionality, lets download two VCF files (autohexaploid sweetpotato) from the MAPpoly vignettes repository on Github, and read them using `read_vcf` function:
+It is not rare to have multiple datasets from the same population or individuals from different sources of molecular data, such as SNP chips, GBS and/or microsatellites. `MAPpoly` can combine datasets for the same set of individuals using the function `merge_datasets`. To demonstrate its functionality, let us download two VCF files (autohexaploid sweetpotato) from the MAPpoly vignettes repository on Github, and read them using `read_vcf` function:
 
 ```{r merge_data, results=FALSE}
 # Downloading VCF files regarding chromosome 1 and 2
@@ -412,153 +417,126 @@ print(data1)
 print(data2)
 ```
 
-Now lets merge them and see the output:
+Now, let us merge them 
 
-```{r merge_data_3}
+```{r merge_data_3, results=FALSE}
 # Merge datasets
 merged_data = merge_datasets(data1, data2)
+print(merged_data, detailed = TRUE)
 ```
 
-```{r, results=FALSE}
-print(merged_data)
-```
-
-Notice that all markers of both datasets were merged successfully, which allows using just one (merged) dataset in the following steps of map construction. 
-
-## Exploratory Analysis 
-
-### Whole dataset
+# Exploratory Analysis 
 
 For the purpose of this tutorial, we will keep using the tetraploid potato array data (loaded using the examples above). We will construct a genetic map of the B2721 population, which is a cross between two tetraploid potato varieties: Atlantic and B1829-5. The population comprises 160 offsprings genotyped with the SolCAP Infinium 8303 potato array. The dataset also contains the genomic order of the SNPs from the _Solanum tuberosum_ genome version 4.03. The genotype calling was performed with fitPoly R package using [this pipeline](https://github.com/mmollina/SCRI/blob/main/data/fitpoly_tetra_call/B2721_fitpoly_call.R). Another option would be to use ClusterCall and [this pipeline](https://mmollina.github.io/tutorials/solcap/solcap_example.html).
 
 Once the data is loaded, you can explore the dataset using the `print` function:
 
-```{r print_data_dose, results=FALSE}
+```{r print_data_dose}
 print(dat, detailed = TRUE)
 ```
 
-This function shows information about the dataset including the ploidy level, total number of individuals, total number of markers, number of informative markers, proportion of missing data and redundant markers. If `detailed = TRUE`, the function also outputs the number of markers in each sequence, if available, and the number of markers contained in all possible dosage combinations between both parents.
+This function shows information about the dataset including the ploidy level, total number of individuals, total number of markers, number of informative markers, proportion of missing data and redundant markers. If `detailed = TRUE`, the function also outputs the number of markers in each sequence (chromosome, in this case), if available, and the number of markers for dosage combinations between both parents.
 
 You can also explore the dataset visually using the `plot` function:
 
 ```{r plot_data_dose}
 plot(dat)
 ```
+The output figure shows a bar plot on the left-hand side with the number of markers in each allele dosage combination between both parents. The right labels indicate allele dosages for Parent 1 and Parent 2, respectively. The upper-right plot contains the $\log_{10}(p-value)$ from $\chi^2$ tests for all markers, considering the expected segregation patterns under Mendelian inheritance. The lower-right plot contains a graphical representation of the allele dosages and missing data distribution for all markers and individuals. Finally, the bottom-right graphic shows the proportion of redundant markers in the dataset.
 
-The output figure shows a bar plot on the left-hand side with the number of markers contained in each allele dosage combination between both parents. The right labels indicate allele dosages for Parent 1 and Parent 2, respectively. The upper-right plot contains the $\log_{10}(p-value)$ from $\chi^2$ tests for all markers, considering the expected segregation patterns under Mendelian inheritance. The lower-right plot contains a graphical representation of the allele dosages and missing data distribution for all markers and individuals. Finally, the bottom-right graphic shows the proportion of redundant markers in the dataset, when available.
+If you want to view a specific marker information, use the `plot_mrk_info` function. You need to indicate your dataset object using the `input.data` argument, and the desired marker using the `mrk` argument. You can indicate the marker using its number or its name (string):
 
-### Marker-specific
-
-If you want to view a specific marker information, use the `plot_mrk_info` function. You should indicate your dataset object using the `input.data` argument, and the desired marker using the `mrk` argument. You can indicate the marker using its number or its name (string):
-
-```{r mrk_info1, fig.width=10}
+```{r mrk_info1, fig.width=5}
 plot_mrk_info(input.data = dat, mrk = 1979)
+# or
+# plot_mrk_info(input.data = dat, mrk = 'solcap_snp_c2_17752')
 ```
 
-The same result is produced using
-
-```{r mrk_info2, fig.width=10, fig.height=7, eval=FALSE}
-plot_mrk_info(input.data = dat, mrk = 'solcap_snp_c2_17752')
-```
-
-When applied to a dosage-based dataset, the function outputs a figure showing: marker name and position in the dataset, allele dosage in parents 1 and 2, proportion of missing data, p-value of the associated $\chi^2$ test for Mendelian segregation, sequence and position information (when available). The figure also contains a plot with the allele dosage and missing data distribution in the population. When applied to a probability-baaed dataset, the function outputs the probability threshold and a
-3-dimensional plot containing the probability distribution for each allele dosage considering all individuals. You can also print 
-the absolute frequency of genotypes for marker `solcap_snp_c2_17752` using
+When applied to a dosage-based dataset, the function shows a figure with the marker name and position in the dataset, allele dosage in parents 1 and 2, proportion of missing data, p-value of the associated $\chi^2$ test, sequence and position information (when available). The figure also contains a plot with the allele dosage and missing data distribution in the population. When applied to a probability-based dataset, the function outputs the probability threshold and 3D scatter of the probability distribution for each individual. You can also print the absolute frequency of genotypes using
 
 ```{r, print_mrk}
 print_mrk(dat, mrks = 'solcap_snp_c2_17752')
 ```
 
 # Filtering and Quality Control
-
 ## Missing data filtering
 
-The function `filter_missing` filter markers and/or individuals that exceeds a defined threshold for missing data updating the dataset. The argument `input.data` should contain your dataset object, and you can choose to filter either by 'marker' or 'individual' using the `type` argument (string). You can also define the maximum proportion of missing data using the `filter.thres` argument (ranges from 0 to 1, i.e. a threshold of 0.05 will keep just markers or individuals with less than 5% of missing data). When TRUE (default), the `inter` argument plots markers or individuals vs. frequency of missing data.
+The function `filter_missing` filters out markers and/or individuals that exceeds a defined threshold of missing data. The argument `input.data` should contain your dataset object, and you can choose to filter either by 'marker' or 'individual' using the `type` argument (string). You can also define the maximum proportion of missing data using the `filter.thres` argument (ranges from 0 to 1, i.e. a threshold of 0.05 will keep just markers or individuals with less than 5% of missing data). When `TRUE` (default), the `inter` argument plots markers or individuals vs. frequency of missing data.
 
 ```{r filter_missing}
 # Filtering dataset by marker
 dat <- filter_missing(input.data = dat, type = "marker", 
-                               filter.thres = 0.05, inter = FALSE)
-```
-
-```{r, results=FALSE}
-print(dat)
+                               filter.thres = 0.05, inter = TRUE)
 ```
 
 ```{r}
 # Filtering dataset by individual
 dat <- filter_missing(input.data = dat, type = "individual", 
-                               filter.thres = 0.025, inter = FALSE)                            
+                               filter.thres = 0.025, inter = TRUE)                            
 ```
 
-```{r, results=FALSE}
+```{r}
 print(dat)
 ```
 
-In this dataset, 1229 markers presented a proportion of missing data above the defined threshold, while 12 individuals exceeded the defined threshold. Then we will use the final filtered dataset during the rest of the analysis. Notice that the function `read_vcf` also provides parameters to filter out markers depending on their average depth and missing data, as well as removes data points that do not reach a minimum pre-defined depth value. Check the [`read_vcf`](#read_vcf) section for more information.
+In this dataset, 1230 markers had a proportion of missing data above the defined threshold (0.05), while 12 individuals exceeded the defined threshold. Then we will use the final filtered dataset during the rest of the analysis. Notice that the function `read_vcf` also provides parameters to filter out markers depending on their average depth and missing data, as well as removes data points that do not reach a minimum pre-defined depth value. Check the [`read_vcf`](#read_vcf) section for more information.
 
 ## Segregation test
 
-Another very important point to consider is the expected marker segregation pattern under Mendelian inheritance. Markers with segregation distortion can produce unreliable estimates and may be removed (at least for a while) from the dataset. A good test for that is the chi-square ($\chi^2$), which basically matches expected genotype frequencies against observed frequencies and calculates the associated p-value. In order to define the p-value threshold for the tests, we will use the Bonferroni correction: 
+Another important point to be considered is the expected marker segregation pattern under Mendelian inheritance. Here we will use the chi-square ($\chi^2$) to assess the segregation ditortion. The test matches expected genotype frequencies against observed frequencies and calculates the associated p-value. In order to define the p-value threshold for the tests, we will use the Bonferroni correction, which a good aproximation is obtained using 
 
 $$\alpha_{thres} = \frac{\alpha}{\#markers}$$
 
 We will also assume that only random chromosome bivalent pairing occurs and there is no double reduction.
 
-```{r, results=FALSE}
+```{r, echo=FALSE, results=FALSE}
 source("https://raw.githubusercontent.com/mmollina/SCRI/main/MAPpoly/get_solcap_snp_pos.R")
 ```
-
 ```{r chisq_test}
 pval.bonf <- 0.05/dat$n.mrk
-mrks.chi.filt <- filter_segregation(dat, chisq.pval.thres =  pval.bonf, inter = FALSE)
+mrks.chi.filt <- filter_segregation(dat, chisq.pval.thres =  pval.bonf, inter = TRUE)
 seq.init <- make_seq_mappoly(mrks.chi.filt)
 ```
 
-Notice that `filter_segregation` does not produce a filtered dataset; it just tells you which markers follow the expected Mendelian segregation pattern. To select these markers from your dataset, you may use the `make_seq_mappoly` function.
+Notice that `filter_segregation` does not produce a filtered dataset; it just tells you which markers follow the expected Mendelian segregation pattern. To select these markers from your dataset, you may use `make_seq_mappoly` function
 
-```{r plot_filt_seq, fig.width=10}
+```{r plot_filt_seq, fig.width=7}
 plot(seq.init)
 ```
 
-It is worth to mention that all redundant markers identified during data reading step are stored in the main dataset. The redundant markers are automatically removed and can be added back once the maps are finished using the function `update_map` (described in details later in this tutorial).
+All redundant markers identified during data reading step are stored in the main dataset. The redundant markers are automatically removed and can be added back once the maps are finished using the function `update_map` (described in details later in this tutorial).
 
-# Two-point analysis
+# Two-point analysis{#tpt}
 
-Once the markers are filtered and selected, we need to compute the pairwise recombination fraction between all of them (two-point analysis). The function `est_pairwise_rf` is used to estimate all the pairwise recombination fractions between markers in the sequence provided. Since the output object is too big to be fully displayed on the screen, `MAPpoly` shows a summary. Parallel computation is available and, if you want to use it, you need to define the available number of cores in your machine and also guarantee that you have sufficient RAM memory for that. Remember that it is always good to leave one core available for the system, and be aware that this step **will take a while** to compute if you have few cores available.
+Once the markers are selected, we need to compute the pairwise recombination fraction between all of them (two-point analysis). The function `est_pairwise_rf` is used to estimate all the pairwise recombination fractions between markers in the sequence provided. Since the output object is too big to be fully displayed on the screen, `MAPpoly` shows only a summary. Parallel computation is available and, if you want to use it, you need to define the available number of cores in your machine and also guarantee that you have sufficient RAM memory for that. Remember that it is always good to leave one core available for the system, and be aware that this step **will take a while** to compute if you have few cores available.
 
 ```{r two_pt}
 # Defining number of cores
 n.cores = parallel::detectCores() - 1
-
-#(~ 9.2 minutes using 23 cores)
+#(~ 9.9 minutes using 23 cores)
 all.rf.pairwise <- est_pairwise_rf(input.seq = seq.init, ncpus = n.cores)
-```
-
-```{r}
 all.rf.pairwise
 ```
 
-To assess the recombination fraction between a particular pair of markers, say markers 2204 and 4508, we use the following syntax:
+To assess the recombination fraction between a particular pair of markers, say markers 2204 and 4508, you can use the following
 
-```{r, plot_twopt_example, fig.width=10, fig.align="center"}
+```{r, plot_twopt_example1}
 all.rf.pairwise$pairwise$`2204-4508`
+```
+In this case, `2204-4508` represents the position of the markers in the filtered data set. The name of the rows have the form `x-y`, where `x` and `y` indicate how many homologous chromosomes share the same allelic variant in parents $P1$ and $P2$, respectively (see [this figure](https://www.g3journal.org/content/ggg/9/10/3297/F7.large.jpg) in @Mollinari2019 for notation). The first column indicates the LOD Score in relation to the most likely linkage phase configuration. The second column shows the estimated recombination fraction for each configuration, and the third indicates the LOD Score comparing the likelihood under no linkage ($r = 0.5$) with the estimated recombination fraction (evidence of linkage). These results can be plotted using
+
+```{r, plot_twopt_example2, fig.width=5, fig.align="center"}
 plot(all.rf.pairwise, first.mrk = 2204, second.mrk = 4508)
 ```
-
-In this case, `2204-4508` represents the position of the markers in the filtered data set. The name of the rows have the form `x-y`, where `x` and `y` indicate how many homologous chromosomes share the same allelic variant in parents $P1$ and $P2$, respectively (see [this figure](https://www.g3journal.org/content/ggg/9/10/3297/F7.large.jpg) in @Mollinari2019 for notation). The first column indicates the LOD Score in relation to the most likely linkage phase configuration. The second column shows the estimated recombination fraction for each configuration, and the third indicates the LOD Score comparing the likelihood under no linkage ($r = 0.5$) with the estimated recombination fraction (evidence of linkage).
-
 ## Assembling recombination fraction and LOD Score matrices
 
-Recombination fraction and LOD Score matrices are fundamental in genetic mapping. Later in this tutorial, we will use these matrices as the basic information to order markers and also to perform some diagnostics. To convert the two-point object into recombination fraction and LOD Score matrices, we need to assume thresholds for the three columns observed in the previous output. The arguments `thresh.LOD.ph` and `thresh.LOD.rf` set LOD Scores thresholds for the second most likely linkage phase configuration and recombination fraction. Here we assume `thresh.LOD.ph = 0` and `thresh.LOD.rf = 0`, thus no matter how likely is the second best option, all the computed values will be considered. The argument `thresh.rf = 0.5` indicates that the maximum accepted recombination fraction is `0.5`. To convert these values in a recombination fraction matrix, we use the function `rf_list_to_matrix`.
+Recombination fraction and LOD Score matrices are fundamental in genetic mapping. Later in this tutorial, we will use these matrices as the basic information to order markers and also to perform some diagnostics. To convert the two-point object into recombination fraction and LOD Score matrices, we need to assume thresholds for the three columns observed in the previous output. The arguments `thresh.LOD.ph` and `thresh.LOD.rf` set LOD Scores thresholds for the second most likely linkage phase configuration and recombination fraction. Here we assume `thresh.LOD.ph = 0` and `thresh.LOD.rf = 0`, thus no matter how likely is the second best option, the function will consider the most likely. The argument `thresh.rf = 0.5` indicates that the maximum accepted recombination fraction is `0.5`. To convert these values in a recombination fraction matrix, we use the function `rf_list_to_matrix`.
 
 ```{r rf_mat, echo=TRUE}
-mat <- rf_list_to_matrix(input.twopt = all.rf.pairwise, ncpus = n.cores)
+mat <- rf_list_to_matrix(input.twopt = all.rf.pairwise)
 ```
 
-For big datasets, you may use the multi-core support to perform the conversions, using the parameter `n.clusters` to define the number of CPU's. It is also possible to filter again for the parameters mentioned above, such as `thresh.LOD.ph`, `thresh.LOD.rf` and `thresh.rf`.
-
-We can also plot this matrix using the reference genome order. For doing so, we use the function `get_genomic_order` to get the genomic order of the input sequence and use the resulting order to index the recombination fraction matrix. If the reference order is consistent with the marker order in this specific population, we should observe a block-diagonal matrix and a monotonic pattern within each sub-matrix. Since the recombination fraction matrix dimensions for the whole genome are usually large, it is possible to summarize neighboring cells' information using a pre-defined grid. The size of the grid is determined by the aggregation factor `fact`. Thus, using `fact = 5`, for instance, will average the recombination fractions of cells within a $5 \times 5$ grid producing the following heatmap
+For big datasets, you may use the multi-core support to perform the conversions, using the parameter `ncpus` to define the number of CPU's. We can plot the recombination fraction matrix using `plot(mat)`, however, if the markers are not ordered, this command will yield a heat-map with no distinct pattern, which will have almost no use. Further, in this tutorial, we will show how to use the The UPGMA clustering algorithm to form linkage groups and the MDS algorithm to order markers within each group. For now, let us use the chromosomes and marker order from the reference genome using function`get_genomic_order`. If the reference order is consistent with the marker order in this specific population, we should observe a block-diagonal matrix and a monotonic pattern within each sub-matrix. Since the recombination fraction matrix dimensions for the whole genome are usually large, it is possible to summarize neighboring cells' information using a pre-defined grid. The size of the grid is determined by the aggregation factor `fact`. Using `fact = 5`, for instance, will average the recombination fractions of cells within a $5 \times 5$ grid producing the following heatmap
 
 ```{r plot_full_mat, fig.width=7, fig.height=7}
 id<-get_genomic_order(seq.init)
@@ -566,7 +544,7 @@ s.o <- make_seq_mappoly(id)
 plot(mat, ord = s.o$seq.mrk.names, fact = 5)
 ```
 
-As expected, we observe the block-diagonal matrix with monotonic patterns. In the previous case, the thresholds allowed to plot almost all points in the recombination fraction matrix. The empty cells in the matrix indicate markers where it is impossible to detect recombinant events using two-point estimates (e.g., between $1 \times 0$ and $0 \times 1$ marker). Yet, if the thresholds become more stringent (higher LODs and lower rf), the matrix becomes more sparse.
+As expected, we observe the block-diagonal matrix with monotonic patterns. In the previous case, the thresholds allowed to plot almost all points in the recombination fraction matrix. The empty cells in the matrix (if any) indicate marker combinations where it is impossible to detect recombining events using two-point estimates (e.g., between $1 \times 0$ and $0 \times 1$ marker). Yet, if the thresholds become more stringent (higher LODs and lower rf), the matrix becomes more sparse.
 
 # Assembling linkage groups
 
@@ -576,14 +554,11 @@ The function `group_mappoly` assign markers to linkage groups using the recombin
 grs <- group_mappoly(input.mat = mat,
                      expected.groups = 12,
                      comp.mat = TRUE, 
-                     inter = FALSE)
-```
-
-``` r
+                     inter = TRUE)
 grs
 ```
 
-Here, we have the 3639 markers distributed in 12 linkage groups. The rows indicate linkage groups obtained using linkage information and the columns are the chromosomes in the reference genome. Notice the diagonal indicating the concordance between the two sources of information. Now, we can plot the resulting marker cluster analysis.
+Here, we have the 4986 markers distributed in 12 linkage groups. The rows indicate linkage groups obtained using linkage information and the columns are the chromosomes in the reference genome. Notice the diagonal indicating the concordance between the two sources of information. Now, we can plot the resulting marker cluster analysis.
 
 ```{r plot_group, fig.width=10, fig.height=7}
 plot(grs)
@@ -612,18 +587,17 @@ for(i in 1:12)
   plot(rf_list_to_matrix(LGS[[i]]$tpt), ord = LGS[[i]]$lg$seq.mrk.names, 
        main.text = paste0("LG", i), index = FALSE, fact = 5)
 par(op)
-
-
 ```
-
-#FIXME:----------------- 
-explain that we will construct the map foe one LG and after we will do it for all LGs
 
 # Estimating the map for a given order
 
-In this section, we will estimate the genetic map for each linkage group. First, we will use the marker order provided by the _Solanum tuberosum_ genome version 4.03. However, when a reference genome is not available or fully colinear to the population's parents, we need to use *de-novo* algorithms to order the markers, which will be addressed later in this tutorial. 
+In this section, we will construct the genetic map for a single linkage group. Latter in this tutorial, we will use a parallelized version of the procedures presented in this section to build the linkage map for all 12 potato linkage groups. In the first part of this section, we will use the marker order provided by the _Solanum tuberosum_ genome version 4.03. In a second part we will use the MDS algorithm to obtain a *de-novo* order of the markers based on the recombination fraction matrix. When a reference genome is available, but not fully collinear with the mapping population, the user should consider using both sources of information, as presented in the [Supplemental Material](https://gsajournals.figshare.com/articles/Supplemental_Material_for_Mollinari_et_al_2020/10255844?file=18517505) of our sweetpotato map. 
 
-The estimation of the genetic map for a given order involves the computation of recombination fraction between adjacent markers and finding the linkage phase configuration of those markers in both parents. The core function to perform these tasks in `MAPpoly` is `est_rf_hmm_sequential`. This function uses the pairwise recombination fraction as the first source of information to sequentially position allelic variants in specific homologs. For situations where pairwise analysis has limited power, the algorithm relies on the likelihood obtained through a hidden Markov model (HMM) @Mollinari2019. Once all markers are positioned, the final map is reconstructed using the HMM multipoint algorithm. 
+The estimation of the genetic map for a given order involves the computation of recombination fraction between adjacent markers and finding the linkage phase configuration of those markers in both parents. The core function to perform these tasks in `MAPpoly` is `est_rf_hmm_sequential`. This function uses the pairwise [recombination fraction](#tpt) as the first source of information to sequentially position allelic variants in specific homologs. For situations where pairwise analysis has limited power, the algorithm relies on the likelihood obtained through a hidden Markov model (HMM) @Mollinari2019. Once all markers are positioned, the final map is reconstructed using the HMM multipoint algorithm. 
+
+```{r, phase_example, out.width='90%', fig.align='center', fig.cap='Example of sequential phasing', echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/mmollina/SCRI/main/docs/phase.gif")
+```
 
 Several arguments are available to control the inclusion and phasing of the markers in the chain. The argument `start.set` defines the number of initial markers used in an exhaustive search for the most probable configuration. After that, markres are sequentially added to the end of the map. `thres.twopt` receives the threshold to whether when the linkage phases compared via two-point analysis should be considered, and the HMM analysis should not be used to infer the linkage phase (A. K. A. $\eta$ in @Mollinari2019). `thres.hmm` receives the threshold for keeping competing maps computed using HMM (if the two-point analysis was not enough) in the next round of marker insertion. `extend.tail` indicates the number of markers that should be considered at the end of the chain to compute the multilocus genetic map when inserting a new marker. `tol` and `tol.final` receive the desired accuracy to estimate the sub-maps during the sequential phasing procedure and the desired accuracy in the final map. `phase.number.limit` receives the limit number of linkage phase configurations to be tested using HMM. `info.tail` is a logical argument: if TRUE it uses the complete informative tail (last markers in the chain that allow all homologous to be distinguished in the parents) of the chain to calculate the likelihood of the linkage phases. 
 
@@ -793,7 +767,6 @@ mtext(text = "MDS", side = 3, adj = 1)
 Please notice that these maps have the same local inversions shown in the dot plots presented earlier. In this case, the log-likelihood of the genomic order is higher than the one obtained using the MDS order. For this linkage group, the genomic-based map was chosen as the best one.
 
 # Parallel map construction
-
 ## Using one core by LG
 
 Now, the mapping procedure will be applied to all linkage groups using parallelization. Although users must be encouraged to compare both MDS and genomic orders following the previous example, the genomic order will be considered as an example (remember that this step will take a **long time** to run):
@@ -874,6 +847,22 @@ After building two or more maps, one may want to compare summary statistics of t
 
 ```{r}
 knitr::kable(summary_maps(MAPs))
+```
+
+## Export map 
+
+```{r}
+require(polymapR)
+dat<-export_data_to_polymapR(hexafake)
+F1checked <- checkF1(dosage_matrix = dat, 
+                     parent1 = "P1",
+                     parent2 = "P2",
+                     F1 = colnames(dat)[-c(1:2)],
+                     polysomic = TRUE, 
+                     disomic = FALSE, 
+                     mixed = FALSE, 
+                     ploidy = 6)
+ head(F1checked$checked_F1)
 ```
 
 # Genotype conditional probabilities
