@@ -107,7 +107,7 @@ NOTE: If genomic information is not available, the 'sequence' and 'sequence posi
 
 Example:
 
-```{r, data set_example, out.width='90%', fig.align='center', fig.cap='Figure 1: Example of CSV data set', echo=FALSE}
+```{r, data set_example, out.width='90%', fig.align='center', fig.cap='Example of CSV data set', echo=FALSE}
 knitr::include_graphics("https://raw.githubusercontent.com/mmollina/MAPpoly_vignettes/master/vignette_tetraploid/image/csv.png")
 ```
 
@@ -194,7 +194,7 @@ dat.dose.mpl <- read_geno(file.in  = tempfl, elim.redundant = TRUE)
 unlink(tempfl)
 ```
 
-### Using `read_geno_prob`
+### Using `read_geno_prob`{#read_prob_geno}
 
 Following the same header described before, `read_geno_prob` reads a table containing the probability distribution for each combination of marker $\times$ individual. Each line on this table represents the combination of one marker with one individual, and the respective probabilities. The first two columns represent the marker and the individual, respectively, and the remaining elements represent the probability associated with each one of the possible dosages
 
@@ -433,6 +433,7 @@ Once the data is loaded, you can explore the dataset using the `print` function:
 
 ```{r print_data_dose}
 print(dat, detailed = TRUE)
+
 ```
 
 This function shows information about the dataset including the ploidy level, total number of individuals, total number of markers, number of informative markers, proportion of missing data and redundant markers. If `detailed = TRUE`, the function also outputs the number of markers in each sequence (chromosome, in this case), if available, and the number of markers for dosage combinations between both parents.
@@ -441,6 +442,7 @@ You can also explore the dataset visually using the `plot` function:
 
 ```{r plot_data_dose}
 plot(dat)
+
 ```
 The output figure shows a bar plot on the left-hand side with the number of markers in each allele dosage combination between both parents. The right labels indicate allele dosages for Parent 1 and Parent 2, respectively. The upper-right plot contains the $\log_{10}(p-value)$ from $\chi^2$ tests for all markers, considering the expected segregation patterns under Mendelian inheritance. The lower-right plot contains a graphical representation of the allele dosages and missing data distribution for all markers and individuals. Finally, the bottom-right graphic shows the proportion of redundant markers in the dataset.
 
@@ -472,11 +474,13 @@ dat <- filter_missing(input.data = dat, type = "marker",
 ```{r}
 # Filtering dataset by individual
 dat <- filter_missing(input.data = dat, type = "individual", 
-                               filter.thres = 0.025, inter = TRUE)                            
+                               filter.thres = 0.025, inter = TRUE)   
+
 ```
 
 ```{r}
 print(dat)
+
 ```
 
 In this dataset, 1230 markers had a proportion of missing data above the defined threshold (0.05), while 12 individuals exceeded the defined threshold. Then we will use the final filtered dataset during the rest of the analysis. Notice that the function `read_vcf` also provides parameters to filter out markers depending on their average depth and missing data, as well as removes data points that do not reach a minimum pre-defined depth value. Check the [`read_vcf`](#read_vcf) section for more information.
@@ -525,7 +529,7 @@ all.rf.pairwise$pairwise$`2204-4508`
 ```
 In this case, `2204-4508` represents the position of the markers in the filtered data set. The name of the rows have the form `x-y`, where `x` and `y` indicate how many homologous chromosomes share the same allelic variant in parents $P1$ and $P2$, respectively (see [this figure](https://www.g3journal.org/content/ggg/9/10/3297/F7.large.jpg) in @Mollinari2019 for notation). The first column indicates the LOD Score in relation to the most likely linkage phase configuration. The second column shows the estimated recombination fraction for each configuration, and the third indicates the LOD Score comparing the likelihood under no linkage ($r = 0.5$) with the estimated recombination fraction (evidence of linkage). These results can be plotted using
 
-```{r, plot_twopt_example2, fig.width=5, fig.align="center"}
+```{r, plot_twopt_example2, fig.width=7, fig.height=7, fig.align="center"}
 plot(all.rf.pairwise, first.mrk = 2204, second.mrk = 4508)
 ```
 ## Assembling recombination fraction and LOD Score matrices
@@ -591,19 +595,22 @@ par(op)
 
 # Estimating the map for a given order
 
-In this section, we will construct the genetic map for a single linkage group. Latter in this tutorial, we will use a parallelized version of the procedures presented in this section to build the linkage map for all 12 potato linkage groups. In the first part of this section, we will use the marker order provided by the _Solanum tuberosum_ genome version 4.03. In a second part we will use the MDS algorithm to obtain a *de-novo* order of the markers based on the recombination fraction matrix. When a reference genome is available, but not fully collinear with the mapping population, the user should consider using both sources of information, as presented in the [Supplemental Material](https://gsajournals.figshare.com/articles/Supplemental_Material_for_Mollinari_et_al_2020/10255844?file=18517505) of our sweetpotato map. 
+In this section, we will construct the genetic map for a single linkage group. Later in this tutorial, we will build the linkage map for all 12 potato linkage groups using a parallelized version of the procedures presented here. In the first part of this section, we will construct the map using the marker order provided by the _Solanum tuberosum_ genome version 4.03. In the second part, we will use the MDS algorithm to obtain a *de-novo* order of the markers based on the recombination fraction matrix. When a reference genome is available but not fully collinear with the mapping population, the user should consider applying both sources of information, as presented in the[Supplemental Material](https://gsajournals.figshare.com/articles/Supplemental_Material_for_Mollinari_et_al_2020/10255844?file=18517505) of our sweetpotato map. 
 
-The estimation of the genetic map for a given order involves the computation of recombination fraction between adjacent markers and finding the linkage phase configuration of those markers in both parents. The core function to perform these tasks in `MAPpoly` is `est_rf_hmm_sequential`. This function uses the pairwise [recombination fraction](#tpt) as the first source of information to sequentially position allelic variants in specific homologs. For situations where pairwise analysis has limited power, the algorithm relies on the likelihood obtained through a hidden Markov model (HMM) @Mollinari2019. Once all markers are positioned, the final map is reconstructed using the HMM multipoint algorithm. 
+The estimation of the genetic map for a given order involves the computation of recombination fraction between adjacent markers and inferring the linkage phase configuration of those markers in both parents. The core function to perform these tasks in `MAPpoly` is `est_rf_hmm_sequential`. This function uses the pairwise [recombination fraction](#tpt) as the first source of information to sequenlially position allelic variants in specific parental homologs. For situations where pairwise analysis has limited power, the algorithm relies on the likelihood obtained through a hidden Markov model (HMM) @Mollinari2019. Once all markers are positioned, the final map is reconstructed using the HMM multipoint algorithm. 
 
-```{r, phase_example, out.width='90%', fig.align='center', fig.cap='Example of sequential phasing', echo=FALSE}
-knitr::include_graphics("https://raw.githubusercontent.com/mmollina/SCRI/main/docs/phase.gif")
-```
+![Example of linkage phase configuration estimation using sequential search space
+reduction and HMM evaluation.](phasing.png)
 
-Several arguments are available to control the inclusion and phasing of the markers in the chain. The argument `start.set` defines the number of initial markers used in an exhaustive search for the most probable configuration. After that, markres are sequentially added to the end of the map. `thres.twopt` receives the threshold to whether when the linkage phases compared via two-point analysis should be considered, and the HMM analysis should not be used to infer the linkage phase (A. K. A. $\eta$ in @Mollinari2019). `thres.hmm` receives the threshold for keeping competing maps computed using HMM (if the two-point analysis was not enough) in the next round of marker insertion. `extend.tail` indicates the number of markers that should be considered at the end of the chain to compute the multilocus genetic map when inserting a new marker. `tol` and `tol.final` receive the desired accuracy to estimate the sub-maps during the sequential phasing procedure and the desired accuracy in the final map. `phase.number.limit` receives the limit number of linkage phase configurations to be tested using HMM. `info.tail` is a logical argument: if TRUE it uses the complete informative tail (last markers in the chain that allow all homologous to be distinguished in the parents) of the chain to calculate the likelihood of the linkage phases. 
+Several arguments are available to control the inclusion and phasing of the markers in the chain. The argument `start.set` defines the number of initial markers used to initiate the map construction. The function performs an exhaustive search for the most likely configuration between the initial markers. For the exhaustive search, all marker pairs in the set are considered. A set of linkage phases for each pair is selected using a two-point LOD Score threshold defined by `thres.twopt`. The LOD Score is always defined in relation to the best linkage phase, i.e., the best linkage phase has LOD Score zero. Configurations with LOD Scores higher than `thres.twopt` are not considered. Depending on the number of pairwise linkage phases selected, there are multiple competing maps for the initial set. This number is displayed at the beginning of the analysis if `verbose=TRUE`. These maps are evaluated using the multilocus HMM-based likelihood. In order to extend the map, the function evaluates if there are no distances between neighbor markers bigger than `sub.map.size.diff.limit`. If so, the first marker is eliminated, and the next marker is included and the exhaustive search is perfomed again. If not, configurations with multilocus LOD Score lower than `thres.hmm` will be considered in the next round of marker insertion. 
 
-First, as an example, let us estimate the map for linkage group 10. The values used for all arguments were obtained using a balance of processing speed and accuracy of the algorithm. As an exercise, it is interesting to try different values and check out the results. For now, let us stick with the following values (**this step can take some hours to finish**, depending on chosen parameters):
+After the initial phase, markers are sequentially added to the end of the map in a similar manner as described before: using both `thres.twopt` and `thres.hmm` thresholds. However, for the insertion of a single marker at the end of the map, the function only takes into account the two-point information between the inserted marker and the ones already positioned in the map. At this point, if the two-point information is not sufficient to phase the marker under `thres.twopt` threshold, the function will evaluate it using the multipoint HMM likelihood. Again, configurations with multilocus LOD Score higher than `thres.hmm` are eliminated, and the remaining ones will be considered in the next round of marker insertion. The argument `extend.tail` indicates the number of markers that should be considered at the end of the map to compute the multilocus genetic map when inserting a new marker. Ideally, all markers should be considered; however, this strategy can be very computationally demanding, especially for hundreds of markers in high ploidy levels. Usually, for tetraploids, we suggest to set this number from 30 to 100 and for hexaploid from 50 to 200. Higher numbers are more likely to result in better maps, but they can be time prohibitive. 
 
-```{r, map_lg10, results=FALSE}
+When inserting single markers at the end of the chain, `sub.map.size.diff.limit` will control if the marker should be positioned based on the expansion of the map caused by the insertion of the marker. If the difference between the previous map and the current map is larger than `sub.map.size.diff.limit`, the marker is not inserted.  Arguments `tol` and `tol.final` receive the desired accuracy to estimate the sub-maps during the sequential phasing procedure and the desired accuracy in the final map. The argument `phase.number.limit` receives the maximum number of linkage phase configurations to be tested using the multiloucs algorithm. `info.tail` is a logical argument: if TRUE it uses the complete informative tail (last markers in the chain that allow all homologous to be distinguished in the parents) of the chain to calculate the likelihood of the linkage phases. 
+
+First, as an example, let us estimate the map for linkage group 10. The values used for all arguments were obtained using a balance of processing speed and accuracy of the algorithm. As an exercise, it is interesting to try different values and check out the results. For now, let us stick with the following values (**this step can be time demanding**, depending on chosen parameters):
+
+```{r, map_lg10}
 lg10.map <- est_rf_hmm_sequential(input.seq = LGS[[10]]$lg,
                                 start.set = 10,
                                 thres.twopt = 10, 
@@ -611,7 +618,7 @@ lg10.map <- est_rf_hmm_sequential(input.seq = LGS[[10]]$lg,
                                 extend.tail = 30,
                                 info.tail = TRUE, 
                                 twopt = LGS[[10]]$tpt,
-                                sub.map.size.diff.limit = 10, 
+                                sub.map.size.diff.limit = 8, 
                                 phase.number.limit = 20,
                                 reestimate.single.ph.configuration = TRUE,
                                 tol = 10e-3,
@@ -620,12 +627,13 @@ lg10.map <- est_rf_hmm_sequential(input.seq = LGS[[10]]$lg,
 
 Now, use the functions `print` and `plot` to view the results:
 
-```{r map_lg10_plot, echo=TRUE, fig.width=10}
+```{r map_lg10_plot, fig.width=10}
 print(lg10.map)
 plot(lg10.map)
+plot(mat, ord = lg10.map$info$mrk.names, fact = 3)
 ```
 
-Back rectangles indicate the presence of the allelic variant in each one of the four homologous in both parents. One also can print a detailed version of the map and plot a specific map segment using the following code.
+In the previous figure, black rectangles indicate the presence of the allelic variant in each one of the four homologous in both parents (**a**,**b**,***c** and, **d** in parent 1, and **e**, **f**, **g**, and **h** in parent 2). One also can print a detailed version of the map and plot a specific map segment using the following code.
 
 ```{r, eval=FALSE}
 print(lg10.map, detailed = TRUE)
@@ -634,26 +642,25 @@ print(lg10.map, detailed = TRUE)
 plot(lg10.map, left.lim = 30, right.lim = 40, mrk.names = TRUE) 
 ```
 
-## Reestimating the map considering genotyping errors
+## Reestimating map using genotype probabilities
 
-Though current technologies enabled the genotyping of thousands of SNPs, they are quite prone to genotyping errors, especially in polyploid species. One way to address this problem is to associate a probability distribution to each one of the markers and allow the HMM to update their probability. This procedure can be applied using either the probability distribution provided by the genotype calling software (loaded in `MAPpoly` using the function `read_geno_prob`) or assuming a global genotype error. For a detailed explanation of this procedure, please see @Mollinari2019. Briefly, the use of a prior information will update the genotype of the markers based on a global chromosome structure. One ca use ...
+Though current technologies enabled the genotyping of thousands of SNPs, they are prone to genotyping errors, especially in polyploid species. To address this problem `MAPpoly` uses prior probability distributions for the marker genotypes (as shown [here](#read_prob_geno)), allowing the HMM to update their probability. This procedure can be applied using either the probability distribution provided by the genotype calling software or assuming a global genotype error. For a detailed explanation of this procedure, please see @Mollinari2019. Briefly, the use of a prior information will update the genotype of the markers based on a global chromosome structure. If the probability didtribution of the genotypes is abailable, one can update the map using 
 
 ```{r, map_prior1_lg10}
 lg10.map.prob <- est_full_hmm_with_prior_prob(input.map = lg10.map)
 plot(lg10.map.prob)
 ```
-
-
+If the user wants to assume a global genotyping error, say 5%, they should use
 ```{r, map_prior_lg10}
 lg10.map.err <- est_full_hmm_with_global_error(input.map = lg10.map, error = 0.05)
 plot(lg10.map.err)
 ```
 
-Notice that a global genotyping error of 5% was used, and the resulting map was smaller than the previous one. Also, some markers were "attracted" and some markers were "repealed" as a result of the smaller confidence used for each marker genotype.
+With a global genotyping error of 5% the resulting map was smaller than the previous maps. Although a smaller map is usually associated with a "high quality" map, this is just a consequence of a much more critical update prompted by the re-estimation procedure: eliminating spurious crossing over event, allowing clear recombination patterns in haplotype reconstruction. We will show an example in a [future section](#haplotype). 
 
 ## Reinserting redundant markers
 
-As mentioned before, redundant markers are automatically removed during the analysis to reduce computational calculations. Besides that, one may want to see the genetic linkage maps considering all markers in the full dataset, including the redundant ones. The addition of redundant markers to a map can be done by just calling the function `update_map`. Here we will show the addition in the previous map:
+As mentioned before, redundant markers are automatically removed during the analysis to reduce computational calculations. However, one may want to see the genetic linkage maps considering all markers in the full dataset. The addition of redundant markers to a map can be done by just calling the function `update_map`. Here we will show the addition in the previous map:
 
 
 ```{r}
@@ -662,18 +669,17 @@ lg10.map.err
 lg10.map.updated
 ```
 
-As can be seen, both maps are identical except for the number of markers.
-
+In this case, the number of markers was increased by 20, however the length of the map is still the same.
 
 # Ordering markers using MDS and reestimating the map
 
-So far the map was reestimated using the genomic order. In real situations, unless a genomic information is provided,  the markers need to be ordered using an optimization technique. Here, we use the MDS (multidimensional scaling) algorithm, proposed in the context of genetic mapping by @Preedy2016. The MDS algorithm requires a recombination fraction matrix, which will be transformed in distances using a mapping function (in this case the Haldane's mapping function). First, let us gather the pairwise recombination fractions for all three linkage groups:
+So far the map was reestimated using the genomic order. However, for some species a good reference genome is not always avaiable and the markers need to be ordered using an optimization technique. Here, we use the MDS (multidimensional scaling) algorithm, proposed in the context of genetic mapping by @Preedy2016. The MDS algorithm requires a recombination fraction matrix, which will be transformed in distances using a mapping function (in `MAPpoly`'s case the Haldane's mapping function). First, let us gather the pairwise recombination fractions for all linkage groups:
 
 ```{r mat_for_ordering, results='hide', results=FALSE}
 mt <- lapply(LGS, function(x) rf_list_to_matrix(x$tpt))
 ```
 
-Now, for each matrix contained in the object `mt`, we use the MDS algorithm:
+Now, for each matrix contained in the object `mt`, we apply the MDS algorithm:
 
 ```{r mds, results='hide', results=FALSE}
 mds.ord <- lapply(mt, mds_mappoly)
@@ -705,10 +711,9 @@ p<-ggplot(geno.vs.mds, aes(genomic.pos, mds.pos)) +
   geom_point(alpha = 1/5, aes(colour = LG)) +
   facet_wrap(~LG) +  xlab("Genome Order") + ylab("Map Order")
 p
-#plotly::ggplotly(p)
 ```
 
-Although several local inconsistencies occurred, the global diagonal pattern indicates a consistent order for all linkage groups using both approaches. Now, let us build the genetic map of linkage group 3 using the MDS order (remember that **this can take a while to finish**):
+Although it is possible to observe local inconsistencies, the global diagonal pattern indicates a consistent order for all linkage groups using both approaches. Now, let us build the genetic map of linkage group 10 using the MDS order
 
 ```{r, map_lg10_mds, results=FALSE}
 lg10.map.mds <- est_rf_hmm_sequential(input.seq = LGS.mds[[10]]$lg,
@@ -731,12 +736,12 @@ And plot the map:
 plot(lg10.map.mds)
 ```
 
-It is also possible to compare the maps using both genomic-based and MDS-based orders with the function `plot_map_list`:
+It is also possible to compare the maps using both genome-based and MDS-based orders with the function `plot_map_list`:
 
 ```{r lg10_map_mds_plot, results='hide', fig.width=10, fig.height=5}
 plot_map_list(list(genome = lg10.map, mds = lg10.map.mds), col = c("#E69F00", "#56B4E9"), title = "")
 ```
-The genomic-based map included the same number of markers but is smaller than the MDS-based map, which indicates a better result. To formally compare the maps, one needs to select the markers that are present in both maps. Interestingly enough, both procedures included the same markers in the final map; however, we provide the code to perform the comparison even if the maps share only a subset of markers:
+The genome-based map included 210 markers while the MDS included 222 markers. The smaller size of the genome-based could be interpreted as a better result. Howvere, since it has less markers, this outcome was expected. To formally compare the maps, let us select the markers present in both maps and reestimate them to compare their likelihoods. 
 
 ```{r map_comp}
 mrks.in.gen<-intersect(lg10.map$maps[[1]]$seq.num, lg10.map.mds$maps[[1]]$seq.num)
@@ -764,7 +769,7 @@ mtext(text = "Genomic", side = 3, adj = 0)
 mtext(text = "MDS", side = 3, adj = 1)
 ```
 
-Please notice that these maps have the same local inversions shown in the dot plots presented earlier. In this case, the log-likelihood of the genomic order is higher than the one obtained using the MDS order. For this linkage group, the genomic-based map was chosen as the best one.
+Notice that these maps have the same local inversions shown in the dot plots presented earlier. In this case, the log-likelihood of the genomic order is higher than the one obtained using the MDS order. For this linkage group, we have a statistical support to 
 
 # Parallel map construction
 ## Using one core by LG
@@ -853,8 +858,8 @@ knitr::kable(summary_maps(MAPs))
 
 ```{r}
 require(polymapR)
-dat<-export_data_to_polymapR(hexafake)
-F1checked <- checkF1(dosage_matrix = dat, 
+dat1<-export_data_to_polymapR(hexafake)
+F1checked <- checkF1(dosage_matrix = dat1, 
                      parent1 = "P1",
                      parent2 = "P2",
                      F1 = colnames(dat)[-c(1:2)],
@@ -897,7 +902,7 @@ par(op)
 
 In this figure, the x-axis represents the genetic map and the y-axis represents the 36 possible genotypes in the full-sib population. The color scale varies from dark purple (high probabilities) to light yellow (low probabilities). With the conditional probabilities computed, it is possible to use the object `genoprob.err` alongside with phenotypic data as the input of the software [QTLpoly](https://github.com/guilherme-pereira/QTLpoly), which is an under development software to map multiple QTLs in full-sib families of outcrossing autopolyploid species.
 
-# Obtaining individual haplotypes
+# Obtaining individual haplotypes {#haplotype}
 
 Once ready, the genotypic conditional probabilities can be used to recover any individual haplotype given the map (details described in @Mollinari2020). To generate this information, one may use the function `calc_homoprob` to account for the probabilities of each homologous, in all map positions for each individual. For example, let us view the homologous probabilities for chromosome 1 and individual 10:
 
