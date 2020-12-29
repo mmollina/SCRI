@@ -41,3 +41,4 @@ vignettes/*.pdf
 .DS_Store
 # 
 data/sample_*
+MAPpoly/B2721_*
