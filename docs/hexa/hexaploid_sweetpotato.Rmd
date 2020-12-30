@@ -1,0 +1,340 @@
+---
+title: "Building a genetic linkage map of three chromosomes in an autohexaploid sweetpotato population using MAPpoly"
+author: "Marcelo Mollinari, Gabriel Gesteira, Guilherme Pereira, A Augusto Garcia, Zhao-Bang Zeng"
+date: '`r Sys.Date()`'
+output:
+  rmdformats::downcute:
+    toc_depth: 3
+    lightbox: TRUE
+    use_bookdown: TRUE
+linestretch: 1.1
+---
+
+```{r setup, include = FALSE, eval = TRUE}
+require(mappoly)
+#load('all_run.RData')
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE)
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+# Introduction
+
+In this tutorial we will build a linkage map for chromosomes 3, 9 and 12 of an autohexaploid sweetpotato full-sib population.
+
+# Loading, filtering, two-point, grouping and ordering
+
+```{r}
+## Loading MAPpoly
+require(mappoly)
+setwd("~/repos/SCRI/MAPpoly/hexa/")
+
+## Reading sweetpotato VCF files (chromosomes 3, 9 and 12)
+dat <- NULL
+for(i in c(3,9,12)){ # for all chromosomes use 1:15 (requires a lot of memory)
+  cat("Loading chromosome", i, "...")
+    tempfl <- tempfile(pattern = paste0("ch", i), fileext = ".vcf.gz")
+    x <- "https://github.com/mmollina/MAPpoly_vignettes/raw/master/data/BT/sweetpotato_chr"
+    address <- paste0(x, i, ".vcf.gz")
+    download.file(url = address, destfile = tempfl, quiet = TRUE)
+    dattemp <- read_vcf(file = tempfl, parent.1 = "PARENT1", parent.2 = "PARENT2", 
+                        ploidy = 6, verbose = FALSE)
+    dat <- merge_datasets(dat, dattemp)
+  cat("\n")
+}
+
+## Plot original data
+plot(dat)
+
+## Filtering dataset by marker
+dat <- filter_missing(input.data = dat, type = "marker", 
+                      filter.thres = 0.05, inter = TRUE)
+plot(dat)
+
+## Filtering dataset by individual
+dat <- filter_missing(input.data = dat, type = "individual", 
+                      filter.thres = 0.05, inter = TRUE)
+
+## Plot and print filtered data
+plot(dat)
+print(dat, detailed = TRUE)
+
+## Segregation test
+pval.bonf <- 0.05/dat$n.mrk ## approx Bonferroni correction
+mrks.chi.filt <- filter_segregation(dat, 
+                                    chisq.pval.thres =  pval.bonf, 
+                                    inter = TRUE)
+## Make initial sequence
+seq.init<-make_seq_mappoly(mrks.chi.filt)
+seq.init
+plot(seq.init)
+print(seq.init, detailed = TRUE)
+
+## Two-point analysis
+#~28 minutes using 24 CPUs (24 x Intel(R) Xeon(R) CPU E5-2670 v3 @ 2.30GHz)
+tpt <- est_pairwise_rf(seq.init, ncpus = 24)
+save(tpt, file = "~/repos/SCRI/MAPpoly/hexa/tpt_6602_mrk.rda")
+## Two-point object to matrix
+#~2.5 minutes
+m <- rf_list_to_matrix(tpt, ncpus = 10)
+save(m, file = "~/repos/SCRI/MAPpoly/hexa/m_6602_mrk.rda")
+
+#load(file = "~/repos/SCRI/MAPpoly/hexa/tpt_6602_mrk.rda")
+#load(file = "~/repos/SCRI/MAPpoly/hexa/m_6602_mrk.rda")
+
+## Plot recombination fraction matrix
+plot(m, fact = 10)
+
+## Filtering markers by recombination fraction pairs
+# Visualizing filtered matrix
+mtemp <- rf_list_to_matrix(tpt, 
+                           thresh.LOD.ph = 5, 
+                           thresh.LOD.rf = 5,
+                           thresh.rf = 0.15,
+                           ncpus = 10)
+plot(mtemp, fact = 10)
+# Filtering
+sf<-rf_snp_filter(tpt, 
+                  thresh.LOD.ph = 5, 
+                  thresh.LOD.rf = 5,
+                  thresh.rf = 0.15, 
+                  probs = c(0.05, 0.99))
+mf<-make_mat_mappoly(m, sf)
+plot(mf, fact = 10)
+
+## Grouping
+gr<-group_mappoly(mf, expected.groups = 3, comp.mat = TRUE)
+gr
+
+## Making ordered sequences using MDS for each group
+## LG 1: corresponds to ch 3
+s1 <- make_seq_mappoly(gr, 1, genomic.info = 1)
+tpt1 <- make_pairs_mappoly(tpt, s1)
+m1 <- rf_list_to_matrix(tpt1)
+o1<-mds_mappoly(m1)
+plot(o1)
+so1 <- make_seq_mappoly(o1)
+plot(m1, ord = so1$seq.mrk.names, fact = 10)
+## Save data for ch 3
+save(dat, o1, m1, so1, tpt1, file = "~/repos/SCRI/MAPpoly/hexa/ch3.rda")
+
+## LG 2: corresponds to ch 9
+s2 <- make_seq_mappoly(gr, 2, genomic.info = 1)
+tpt2 <- make_pairs_mappoly(tpt, s2)
+m2 <- rf_list_to_matrix(tpt2)
+o2<-mds_mappoly(m2)
+plot(o2)
+so2 <- make_seq_mappoly(o2)
+plot(m2, ord = so2$seq.mrk.names, fact = 10)
+## Save data for ch 9
+save(dat, o2, m2, so2, tpt2, file = "~/repos/SCRI/MAPpoly/hexa/ch9.rda")
+
+## LG 3: corresponds to ch 12
+s3 <- make_seq_mappoly(gr, 3, genomic.info = 1)
+tpt3 <- make_pairs_mappoly(tpt, s3)
+m3 <- rf_list_to_matrix(tpt3)
+o3<-mds_mappoly(m3)
+plot(o3)
+so3 <- make_seq_mappoly(o3)
+plot(m3, ord = so3$seq.mrk.names, fact = 10)
+## Save data for ch 12
+save(dat, o3, m3, so3, tpt3, file = "~/repos/SCRI/MAPpoly/hexa/ch12.rda")
+
+## Run individual scripts for each linkage group
+## R CMD BATCH --vanilla phase_ch3.R 
+## R CMD BATCH --vanilla phase_ch9.R 
+## R CMD BATCH --vanilla phase_ch12.R 
+##
+## After running the phasing scripts, open post_phasing.R and proceed 
+## with the final steps
+
+```
+# Phasing
+
+## Linkage Group 1
+```{r}
+## Loading MAPpoly
+require(mappoly)
+load(file = "~/repos/SCRI/MAPpoly/hexa/ch3.rda")
+## Phasing and re-estimating genetic map
+
+## For hexaploids, we usually start with the following values 
+# start.set = 3
+# thres.twopt = 10
+# thres.hmm = 10
+# extend.tail = 100
+# sub.map.size.diff.limit =  3
+
+## After running the phasing for approximately 40 minutes, 
+## we notice that the algorithm was testing eight linkage 
+## phases using the HMM algorithm. Thus we reduced 'thres.hmm' 
+## to five. We observed the same pattern. Then, we reduced it 
+## to two. After that, we evaluated the gaps present in the 
+## final map. This process can be very tedious, but it improves 
+## the quality of the final map. You can also try to use more 
+## stringent filtering in the previous steps.
+
+system.time(lg3.map<-est_rf_hmm_sequential(input.seq = so1,
+                                           start.set = 3,
+                                           thres.twopt = 10,
+                                           thres.hmm = 2,
+                                           extend.tail = 50,
+                                           twopt = tpt1,
+                                           verbose = TRUE,
+                                           tol = 10e-2,
+                                           tol.final = 10e-3,
+                                           phase.number.limit = 20,
+                                           sub.map.size.diff.limit =  3,
+                                           info.tail = TRUE,
+                                           reestimate.single.ph.configuration = TRUE, 
+                                           high.prec = TRUE))
+save.image(file = "~/repos/SCRI/MAPpoly/hexa/ch3_phased.rda")
+
+```
+## Linkage Group 2
+```{r}
+require(mappoly)
+load(file = "~/repos/SCRI/MAPpoly/hexa/ch9.rda")
+## Phasing and re-estimating genetic map
+system.time(lg9.map<-est_rf_hmm_sequential(input.seq = so2,
+                                           start.set = 3,
+                                           thres.twopt = 10,
+                                           thres.hmm = 10,
+                                           extend.tail = 100,
+                                           twopt = tpt2,
+                                           verbose = TRUE,
+                                           tol = 10e-2,
+                                           tol.final = 10e-3,
+                                           phase.number.limit = 20,
+                                           sub.map.size.diff.limit =  3,
+                                           info.tail = TRUE,
+                                           reestimate.single.ph.configuration = TRUE, 
+                                           high.prec = TRUE))
+save.image(file = "~/repos/SCRI/MAPpoly/hexa/ch9_phased.rda")
+
+
+```
+## Linkage Group 3
+```{r}
+require(mappoly)
+load(file = "~/repos/SCRI/MAPpoly/hexa/ch12.rda")
+## Phasing and re-estimating genetic map
+system.time(lg12.map<-est_rf_hmm_sequential(input.seq = so3,
+                                           start.set = 3,
+                                           thres.twopt = 10,
+                                           thres.hmm = 2,
+                                           extend.tail = 50,
+                                           twopt = tpt3,
+                                           verbose = TRUE,
+                                           tol = 10e-2,
+                                           tol.final = 10e-3,
+                                           phase.number.limit = 20,
+                                           sub.map.size.diff.limit =  3,
+                                           info.tail = TRUE,
+                                           reestimate.single.ph.configuration = TRUE, 
+                                           high.prec = TRUE))
+save.image(file = "~/repos/SCRI/MAPpoly/hexa/ch12_phased.rda")
+
+```
+
+# Screening maps
+```{r}
+## Loading MAPpoly
+require(mappoly)
+
+## Loading data for chromosome 3
+load("~/repos/SCRI/MAPpoly/hexa/ch3_phased.rda")
+## Plot phased map (notice that it is a quite long map)
+plot(lg3.map, phase = FALSE)
+
+## Using the most likely map
+lg3.map <- filter_map_at_hmm_thres(lg3.map, thres.hmm = 0.01)
+## Obtaining the ordinary least squared map
+lg3.map.ols<-reest_rf(lg3.map, input.mat = m1, tol = 10e-5, method = "ols")
+## Obtaining the weighted MDS projection onto a 1D principal component
+lg3.map.mds<-reest_rf(lg3.map, input.mds = o1, tol = 10e-5, method = "wMDS_to_1D_pc")
+plot(lg3.map.ols)
+plot(lg3.map.mds)
+plot(lg3.map.mds, left.lim = 0, right.lim = 15, mrk.names = T)
+plot(lg3.map.mds, left.lim = 125, right.lim = 128.7, mrk.names = T)
+id<-c(lg3.map.mds$info$mrk.names[1:7], rev(lg3.map.mds$info$mrk.names)[1])
+lg3.map.mds <- drop_marker(input.map = lg3.map.mds, mrk = id)
+plot(lg3.map.mds)
+
+load("~/repos/SCRI/MAPpoly/hexa/ch9_phased.rda")
+plot(lg9.map, phase = F)
+lg9.map.ols<-reest_rf(lg9.map, input.mat = m2, tol = 10e-5, method = "ols")
+lg9.map.mds<-reest_rf(lg9.map, input.mds = o2, tol = 10e-5, method = "wMDS_to_1D_pc")
+plot(lg9.map.ols)
+plot(lg9.map.mds)
+plot(lg9.map.mds, left.lim = 0, right.lim = 15, mrk.names = T)
+plot(lg9.map.mds, left.lim = 112, right.lim = 123, mrk.names = T)
+id<-c(lg9.map.mds$info$mrk.names[1:5], rev(lg9.map.mds$info$mrk.names)[1:15])
+lg9.map.mds <- drop_marker(input.map = lg9.map.mds, mrk = id)
+plot(lg9.map.mds)
+
+load("~/repos/SCRI/MAPpoly/hexa/ch12_phased.rda")
+plot(lg12.map, phase = F)
+lg12.map.ols<-reest_rf(lg12.map, input.mat = m3, tol = 10e-5, method = "ols")
+lg12.map.mds<-reest_rf(lg12.map, input.mds = o3, tol = 10e-5, method = "wMDS_to_1D_pc")
+plot(lg12.map.ols)
+plot(lg12.map.mds)
+plot(lg12.map.mds, left.lim = 0, right.lim = 15, mrk.names = T)
+plot(lg12.map.mds, left.lim = 117, right.lim = 123, mrk.names = T)
+id<-c(lg12.map.mds$info$mrk.names[1:10], rev(lg12.map.mds$info$mrk.names)[1:15])
+lg12.map.mds <- drop_marker(input.map = lg12.map.mds, mrk = id)
+plot(lg12.map.mds)
+
+final.map <- list(ch3 = lg3.map.mds, 
+                  ch9 = lg9.map.mds, 
+                  ch12 = lg12.map.mds)
+save(final.map, dat, file = "~/repos/SCRI/MAPpoly/hexa/final_maps.rda")
+
+
+```
+
+# Final analysis
+```{r}
+## Load MAPpoly
+require(mappoly)
+
+## Load screened maps
+load("~/repos/SCRI/MAPpoly/hexa/final_maps.rda")
+
+## plot maps 
+# including phases
+plot(final.map$ch3)
+plot(final.map$ch9)
+plot(final.map$ch12)
+
+# standard view
+plot_map_list(final.map, col = "ggstyle")
+
+## Map Summary
+summary_maps(final.map)
+
+## Map distance vs. genome position
+plot_genome_vs_map(final.map, same.ch.lg = TRUE)
+
+## Compute genotype probabilities
+genoprobs <- vector("list", 3)
+for(i in 1:3)
+  genoprobs[[i]] <- calc_genoprob_error(input.map = final.map[[i]], 
+                                        step = 1, error = 0.05)
+save(genoprobs, file = "~/repos/SCRI/MAPpoly/hexa/genoprob.rda")
+
+## Homologue probabilities
+h <- calc_homoprob(genoprobs)
+plot(h)
+
+## preferential pairing profiles
+pp<-calc_prefpair_profiles(genoprobs)
+plot(pp, type = "hom.pairs", 
+     min.y.prof = 0.1, max.y.prof = 0.3, 
+     P = "Beuregard", Q = "Tanzania")
+
+```
