@@ -7,5 +7,3 @@ dat <- read_fitpoly(file.in = "B2721_scores.dat",
                     verbose = TRUE)
 plot(dat)
 print(dat, detailed = TRUE)
-
-plot(log(0:2000))
