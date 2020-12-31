@@ -10,7 +10,7 @@ python2.7 VCF2SM.py -i ../data/sample_/chr3.vcf \
                  -I f1 \
                  -M 2:6 \
                  -f 6 \
-                 -p 0.80 \
-                 -n 0.90 \
-                 -c 0.75 \
+                 -p 0.75 \
+                 -n 0.80 \
+                 -c 0.50 \
                  -t 24
