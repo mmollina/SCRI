@@ -1,4 +1,4 @@
-python2.7 VCF2SM.py -i ../data/sample_vcf/chr3.vcf \
+python2.7 VCF2SM.py -i ../data/sample_/chr3.vcf \
                  -o trifida_sm_chr3.vcf \
                  -d 20 \
                  -D 2000 \
@@ -13,4 +13,4 @@ python2.7 VCF2SM.py -i ../data/sample_vcf/chr3.vcf \
                  -p 0.80 \
                  -n 0.90 \
                  -c 0.75 \
-                 -t 4
+                 -t 24
