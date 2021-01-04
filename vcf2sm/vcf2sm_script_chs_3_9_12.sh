@@ -1,7 +1,7 @@
 python2.7 VCF2SM.py -i ../data/sample_vcf/chr+.vcf \
                  -o trifida_sm_chr+.vcf \
                  --sF 1 \
-                 --eF 3 \
+                 --eF 1 \
                  -d 20 \
                  -D 2000 \
                  -a AD \

@@ -78,6 +78,7 @@ plot(mf, fact = 10)
 ## Grouping
 gr<-group_mappoly(mf, expected.groups = 3, comp.mat = TRUE)
 gr
+plot(gr)
 
 ## Making ordered sequences using MDS for each group
 ## LG 1: corresponds to ch 3
@@ -121,5 +122,10 @@ save(dat, o3, m3, so3, tpt3, file = "~/repos/SCRI/MAPpoly/hexa/ch12.rda")
 ## After running the phasing scripts, open post_phasing.R and proceed 
 ## with the final steps
 
+id <- c(so1$seq.mrk.names,
+        so2$seq.mrk.names,
+        so3$seq.mrk.names)
+
+plot(m, ord = id, fact = 10)
 
 
