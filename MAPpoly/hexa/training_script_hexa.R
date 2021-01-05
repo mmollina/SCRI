@@ -5,6 +5,7 @@ setwd("~/repos/SCRI/MAPpoly/hexa/")
 ## Reading sweetpotato VCF files (chromosomes 3, 9 and 12)
 dat <- NULL
 for(i in c(3,9,12)){ # for all chromosomes use 1:15 (requires a lot of memory)
+  #for(i in 1:15){
   cat("Loading chromosome", i, "...")
     tempfl <- tempfile(pattern = paste0("ch", i), fileext = ".vcf.gz")
     x <- "https://github.com/mmollina/MAPpoly_vignettes/raw/master/data/BT/sweetpotato_chr"

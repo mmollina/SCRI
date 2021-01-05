@@ -1,4 +1,4 @@
-python2.7 VCF2SM.py -i ../data/sample_vcf/sample_ch+.vcf \
+python VCF2SM.py -i ../data/sample_vcf/sample_ch+.vcf \
                  -o sample_trifida_sm_chr+.vcf \
                  --sF 1 \
                  --eF 3 \
