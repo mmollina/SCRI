@@ -16,7 +16,7 @@ for(i in c(3,9,12)){ # for all chromosomes use 1:15 (requires a lot of memory)
     dat <- merge_datasets(dat, dattemp)
   cat("\n")
 }
-
+#save(dat, file = "~/dat.rda")
 ## Plot original data
 plot(dat)
 

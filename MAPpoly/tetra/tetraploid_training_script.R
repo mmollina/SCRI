@@ -1,4 +1,3 @@
-load("~/repos/SCRI/MAPpoly/tetra/all_tetra_analysis.rda")
 library("mappoly")
 setwd("~/repos/SCRI/MAPpoly/tetra/")
 
@@ -25,6 +24,10 @@ print(dat, detailed = TRUE)
 ## Inspecting a specific SNP
 plot_mrk_info(dat, 738)
 print_mrk(dat, 738)
+
+plot_mrk_info(dat, "solcap_snp_c1_3722")
+print_mrk(dat, "solcap_snp_c1_3722")
+
 segreg_poly(m = 4, dP = 1, dQ = 2)
 #### Filtering ####
 ## Filtering by marker
@@ -121,6 +124,7 @@ mf10 <- rf_list_to_matrix(tpt10,
                           thresh.LOD.rf = 5,
                           thresh.rf = 0.15)
 plot(mf10, ord = s.geno.o.10$seq.mrk.names)
+
 ## Filtering
 s.10.f <- rf_snp_filter(input.twopt = tpt10, 
                     thresh.LOD.ph = 5, 
@@ -262,6 +266,7 @@ genoprob <- parallel::parLapply(cl,
                                 calc_genoprob_error, 
                                 step = 1, 
                                 error = 0.05)
+save(dat, MAPs.geno.err, genoprob, file = "~/repos/SCRI/MAPpoly/tetra/genoprob.rda")
 plot_map_list(MAPs.geno.err)
 parallel::stopCluster(cl)
 #### Homolog and preferential pairing probabilities ####
