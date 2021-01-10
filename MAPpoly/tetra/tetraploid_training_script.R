@@ -7,7 +7,7 @@ tempfl <- tempfile(pattern = "B2721_", fileext = ".zip")
 download.file(url = address, destfile = tempfl)
 unzip(tempfl, files = "B2721_scores.dat")
 
-#### Reading fitPoly data (~100 seconds) #### 
+#### Reading fitPoly data (~85 seconds) #### 
 dat <- read_fitpoly(file.in = "B2721_scores.dat", 
                     ploidy = 4, 
                     parent1 = "Atlantic",
