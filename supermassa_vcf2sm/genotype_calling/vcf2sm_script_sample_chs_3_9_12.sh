@@ -4,14 +4,13 @@ python VCF2SM.py -i sample_vcf/sample_ch+.vcf \
                  --eF 3 \
                  -d 20 \
                  -D 2000 \
-                 -a AD \
                  -g BT \
                  -1 Beauregard \
                  -2 Tanzania \
                  -S ~/repos/supermassa/src/SuperMASSA.py \
                  -I f1 \
                  -M 2:6 \
-                 -f 6 \
+                 -f 6 \ 
                  -p 0.80 \
                  -n 0.75 \
                  -c 0.75 \
