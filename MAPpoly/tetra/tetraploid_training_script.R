@@ -7,16 +7,18 @@ tempfl <- tempfile(pattern = "B2721_", fileext = ".zip")
 download.file(url = address, destfile = tempfl)
 unzip(tempfl, files = "B2721_scores.dat")
 
-#### Reading fitPoly data (~85 seconds) #### 
+#### Reading fitPoly data (~95 seconds) ####
 dat <- read_fitpoly(file.in = "B2721_scores.dat", 
                     ploidy = 4, 
                     parent1 = "Atlantic",
                     parent2 = "B1829", 
                     prob.thres = 0.95,
                     verbose = TRUE)
+
 class(dat)
-plot(dat)
 print(dat, detailed = TRUE)
+plot(dat)
+
 ## Adding genome information
 source("get_solcap_snp_pos.R")
 print(dat, detailed = TRUE)
@@ -59,7 +61,7 @@ s10 <- make_seq_mappoly(dat, "seq10")
 s10
 plot(s10)
 
-#### Two-point analysis #### ~8 seconds
+#### Two-point analysis ####
 nc <- parallel::detectCores() - 1
 nc
 tpt10 <- est_pairwise_rf(s10, ncpus = nc, est.type = "disc")
@@ -68,24 +70,32 @@ tpt10$pairwise[90:92]
 round(tpt10$pairwise[[91]], 2)
 plot(tpt10, first.mrk = 1, second.mrk = 2074)
 
-# ~9.8 minutes
-# tpt <- est_pairwise_rf(s, ncpus = nc)
+# ~13.9 minutes
+# system.time(tpt <- est_pairwise_rf(s, ncpus = nc))
 # save(tpt, file = "two_point_rfs.rda")
 # ~40 seconds
 load("two_point_rfs.rda")
 
 ## Recombination Fraction Matrix
-# ~ 80 seconds
-# m <- rf_list_to_matrix(tpt, ncpus = nc)
+# ~ 70 seconds
+# system.time(m <- rf_list_to_matrix(tpt, ncpus = nc))
 # save(m, file = "rfs_mat.rda")
-load("rfs_mat.rda")
+tempfl <- tempfile()
+download.file(url = "https://go.ncsu.edu/rf_mat", destfile = tempfl)
+load(tempfl)
+m
 
 # Plot recombination fraction matrix
 gen.ord <- get_genomic_order(s)
 gen.ord
-plot(gen.ord)
-s.gen.ord <- make_seq_mappoly(gen.ord)
-plot(m, ord = s.gen.ord$seq.mrk.names, fact = 10)
+plot(gen.ord, pch = "_", xlim = c(0,13))
+
+#version 0.2.1 (stable)
+plot(m, ord = rownames(gen.ord), fact = 10)
+
+#version 0.2.2
+#s.gen.ord <- make_seq_mappoly(gen.ord)
+#plot(m, ord = s.gen.ord$seq.mrk.names, fact = 10)
 
 #### Grouping ####
 gr <- group_mappoly(m, 
@@ -98,17 +108,26 @@ s10 <- make_seq_mappoly(gr,
                        arg = 1, 
                        genomic.info = 1)
 s10
-tpt10 <- make_pairs_mappoly(tpt, s10)
 m10 <- rf_list_to_matrix(tpt10)
 plot(m10)
 
 #### Ordering markers ####
 ## Genome order
+
+#version 0.2.1 (stable)
 geno.o.10 <- get_genomic_order(s10)
-s.geno.o.10 <- make_seq_mappoly(geno.o.10)
+s.geno.o.10 <- make_seq_mappoly(dat, rownames(geno.o.10))
 plot(m10, ord = s.geno.o.10$seq.mrk.names)
+
+# version 0.2.2
+#s.geno.o.10 <- make_seq_mappoly(geno.o.10)
+#plot(m10, ord = s.geno.o.10$seq.mrk.names)
+
 ## MDS order
+dev.off()
 mds.o.10 <- mds_mappoly(m10)
+plot(mds.o.10)
+mds.o.10 <- mds_mappoly(m10,n=c(204, 253))
 plot(mds.o.10)
 s.mds.o.10 <- make_seq_mappoly(mds.o.10)
 plot(m10, ord = s.mds.o.10$seq.mrk.names)
@@ -116,24 +135,6 @@ plot(m10, ord = s.mds.o.10$seq.mrk.names)
 ## Comparing genome vs MDS
 plot(match(s.geno.o.10$seq.mrk.names, s.mds.o.10$seq.mrk.names), 
      col = 2, pch = 20, ylab = "MDS", xlab = "genome")
-
-
-#### Filtering using recombination fractions ####
-mf10 <- rf_list_to_matrix(tpt10, 
-                          thresh.LOD.ph = 5, 
-                          thresh.LOD.rf = 5,
-                          thresh.rf = 0.15)
-plot(mf10, ord = s.geno.o.10$seq.mrk.names)
-
-## Filtering
-s.10.f <- rf_snp_filter(input.twopt = tpt10, 
-                    thresh.LOD.ph = 5, 
-                    thresh.LOD.rf = 5, 
-                    thresh.rf = 0.15, 
-                    probs = c(0.05, 1))
-
-s.geno.o.10
-s.mds.o.10
 
 #### Phasing using genome order ~ 2 minutes ####
 lg10.geno.map <- est_rf_hmm_sequential(input.seq = s.geno.o.10,
@@ -241,12 +242,12 @@ for(ch in 1:12){
   cat("\n ~~~~~~ ch:", ch, "...\n")
   lg <- which(z==ch)
   s.temp<-make_seq_mappoly(gr, lg, genomic.info = 1)
-  tpt.temp <- make_pairs_mappoly(tpt, s.temp)
+  tpt.temp <- est_pairwise_rf(s.temp, ncpus = nc)
   s.temp.filt <- rf_snp_filter(tpt.temp, 5, 5, 0.15, c(0.05, 1))
   m.temp <- make_mat_mappoly(m, s.temp)
   g.o <- get_genomic_order(s.temp)
-  s.g <- make_seq_mappoly(g.o)
-  tpt.temp <- make_pairs_mappoly(tpt, input.seq = s.g)
+  s.g <- make_seq_mappoly(dat, rownames(g.o))
+  tpt.temp <- make_pairs_mappoly(tpt.temp, input.seq = s.g)
   LGS[[ch]] <- list(seq = s.g, tpt = tpt.temp)
 }
 #### Parallel map construction
@@ -267,13 +268,12 @@ genoprob <- parallel::parLapply(cl,
                                 step = 1, 
                                 error = 0.05)
 save(dat, MAPs.geno.err, genoprob, file = "~/repos/SCRI/MAPpoly/tetra/genoprob.rda")
-plot_map_list(MAPs.geno.err)
 parallel::stopCluster(cl)
 #### Homolog and preferential pairing probabilities ####
 ## Homologs
 hp <- calc_homoprob(genoprob)
 print(hp)
-plot(hp, ind = 5, lg = 3)
+plot(hp, ind = 5, lg = 3, use.plotly = FALSE)
 plot(hp, ind = 5, lg = 1:12, use.plotly = FALSE)
 ## Preferential pairing
 pp <- calc_prefpair_profiles(genoprob)

@@ -3,9 +3,13 @@ require(dplyr)
 
 # Using 'system'
 setwd("~/repos/SCRI/supermassa_vcf2sm/ploidy_estimation/")
-res<-system("python ../supermassa/src/SuperMASSA.py --print_genotypes --inference f1 --ploidy_range 6:12 --file sugarcane_data/SugSNP225_progeny --f1_parent_data sugarcane_data/SugSNP225_parents", 
-       intern = TRUE)
+res<-system("python2.7 ../supermassa/src/SuperMASSA.py --print_genotypes --inference f1 --ploidy_range 6:12 --file sugarcane_data/SugSNP225_progeny --f1_parent_data sugarcane_data/SugSNP225_parents", 
+            intern = TRUE)
 res
+
+# Windows
+# setwd("C:/Users/mmoll/OneDrive/Desktop/SCRI-main/supermassa_vcf2sm/ploidy_estimation/")
+# res<-system("C:/Python27/python.exe ../supermassa/src/SuperMASSA.py --print_genotypes --inference f1 --ploidy_range 6:12 --file sugarcane_data/SugSNP225_progeny --f1_parent_data sugarcane_data/SugSNP225_parents", intern = TRUE)
 
 # Auxiliary function
 get_results <- function(res, progeny.file, parental.file){
@@ -47,7 +51,7 @@ get_results <- function(res, progeny.file, parental.file){
   return(data.frame(Pr = x1, ploidy = x2[1], "IACSP93-3046" = x2[2], "IACSP95-3018" = x2[3], row.names = snp.name))
 } 
 
-#
+# Get results
 get_results(res = res, 
             progeny.file = "sugarcane_data/SugSNP225_progeny", 
             parental.file = "sugarcane_data/SugSNP225_parents")
@@ -63,13 +67,15 @@ flpro <- grep(pattern = "pro", fl, value = TRUE)
 
 flpar[1]
 flpro[1]
-pdf(file = "sugar_plots.pdf", width = 5, height = 5)
 
+length(flpro)
+
+pdf(file = "sugar_plots.pdf", width = 5, height = 5)
 # Running in batch (~60 seconds)
 df <- NULL
 for(i in 1:length(flpro)){
   cat(i, "\n")
-  src <- paste0("python ../supermassa/src/SuperMASSA.py --print_genotypes --inference f1 --ploidy_range 6:12 --file sugarcane_data/", 
+  src <- paste0("python2.7 ../supermassa/src/SuperMASSA.py --print_genotypes --inference f1 --ploidy_range 2:12 --file sugarcane_data/", 
                 flpro[i], 
                 " --f1_parent_data sugarcane_data/",
                 flpar[i])
@@ -78,9 +84,7 @@ for(i in 1:length(flpro)){
                               progeny.file = paste0("sugarcane_data/", flpro[i]), 
                               parental.file = paste0("sugarcane_data/",flpar[i])))
 }
-
 dev.off()
 df
+
 barplot(table(df[,2]), col = heat.colors(4))
-
-
