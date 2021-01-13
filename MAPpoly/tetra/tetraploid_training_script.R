@@ -14,7 +14,6 @@ dat <- read_fitpoly(file.in = "B2721_scores.dat",
                     parent2 = "B1829", 
                     prob.thres = 0.95,
                     verbose = TRUE)
-
 class(dat)
 print(dat, detailed = TRUE)
 plot(dat)
@@ -74,7 +73,7 @@ plot(tpt10, first.mrk = 1, second.mrk = 2074)
 # system.time(tpt <- est_pairwise_rf(s, ncpus = nc))
 # save(tpt, file = "two_point_rfs.rda")
 # ~40 seconds
-load("two_point_rfs.rda")
+# load("two_point_rfs.rda")
 
 ## Recombination Fraction Matrix
 # ~ 70 seconds

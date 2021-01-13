@@ -65,8 +65,8 @@ flpar <- grep(pattern = "par", fl, value = TRUE)
 # Progeny files
 flpro <- grep(pattern = "pro", fl, value = TRUE)
 
-flpar[1]
-flpro[1]
+flpar
+flpro
 
 length(flpro)
 
@@ -75,16 +75,16 @@ pdf(file = "sugar_plots.pdf", width = 5, height = 5)
 df <- NULL
 for(i in 1:length(flpro)){
   cat(i, "\n")
-  src <- paste0("python2.7 ../supermassa/src/SuperMASSA.py --print_genotypes --inference f1 --ploidy_range 2:12 --file sugarcane_data/", 
+  src <- paste0("python2.7 ../supermassa/src/SuperMASSA.py --print_genotypes --inference f1 --ploidy_range 6:12 --file sugarcane_data/", 
                 flpro[i], 
                 " --f1_parent_data sugarcane_data/",
                 flpar[i])
   res <- system(src, intern = TRUE)
-  df <- rbind(df, get_results(res, 
-                              progeny.file = paste0("sugarcane_data/", flpro[i]), 
-                              parental.file = paste0("sugarcane_data/",flpar[i])))
+  temp <- get_results(res, 
+                    progeny.file = paste0("sugarcane_data/", flpro[i]), 
+                    parental.file = paste0("sugarcane_data/",flpar[i]))
+  df <- rbind(df, temp)
 }
 dev.off()
 df
-
 barplot(table(df[,2]), col = heat.colors(4))
