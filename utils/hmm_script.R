@@ -1,10 +1,10 @@
 p <- 4
 require(mappoly) 
-n.mrk<-10
+n.mrk<-15
 h.temp<-sim_homologous(m = 4, 
                        n.mrk = n.mrk, 
                        max.d = 2,
-                       seed = 6546)
+                       seed = 45637)
 
 #h.temp$hom.allele.p <- lapply(h.temp$hom.allele.p, function(x){
 #  if(any(x==0)) return(0)
@@ -16,7 +16,7 @@ h.temp<-sim_homologous(m = 4,
 #})
 
 dat<-poly_cross_simulate(m = 4, 
-                         rf.vec = mf_h(0.5), 
+                         rf.vec = mf_h(1), 
                          n.mrk=n.mrk,
                          n.ind=200, 
                          h.temp, 
@@ -77,12 +77,16 @@ emission <- function(p1, p2, phaseP1, phaseP2){
 }
 p1 <- dat$dosage.p
 p2 <- dat$dosage.q
-I <- emission(p1,p2,phaseP1, phaseP2)
+I <- emission(p1, p2, map$maps[[1]]$seq.ph$P, map$maps[[1]]$seq.ph$Q)
 g <- dat$geno.dose
 
+
+ind<-1
 #par(ask = T)
-#for(ind in 1:50){
+#for(ind in 1:50)
+{
   cat(ind, "\n")
+  par(bg = "black")
   plot(0, xlim = c(1,n.mrk), ylim = c(1,36), type = "n", 
        axes = F, xlab = "", ylab = "")
   for(k in 1:(n.mrk-1)){
@@ -90,7 +94,7 @@ g <- dat$geno.dose
       for(j in 1:36){
         lines(x = c(k,k+1), y = c(i,j), 
               lwd = ifelse((I[i,k] == g[k, ind] &
-                           I[j,k+1] == g[k+1, ind]), 0.5, 0.0))
+                           I[j,k+1] == g[k+1, ind]), 0.5, 0.0), col = "white")
               #lwd = .2)
               #lwd = genoprob$probs[i,k,ind] * genoprob$probs[j,k+1,ind] * 3)
       }
@@ -100,31 +104,43 @@ g <- dat$geno.dose
     points(rep(k,36), 1:36 ,
            pch = 19,
            #col = "red", cex = 2)
-           col = ifelse(I[,k]==g[k, ind], "#e41a1c", "lightgray"), cex = 1)
-    points(rep(k,36), 1:36 ,
-           #col = "red", cex = 2)
-           pch = ifelse(I[,k]==g[k, ind], 1, 4), cex = 1)
+           col = ifelse(I[,k]==g[k, ind], "#e41a1c", "lightblue"), cex = 1)
   }
-  Sys.sleep(1)
-#}
+  
+}
+par(ask= T)
+for(ind in 63:200){
+  z<-round(genoprob$probs[,,ind], 1)
+  image(z, main = ind)
+}
+dev.off()
+# Make several .png images
 
 
+ind<-64
+g[,64]
 
-z<-round(genoprob$probs[,,1], 1)
-z1<-z
-
-z1[z1 == 0] <- 0.05/34
-z1[z1 == 0.5] <- 0.45
-
-
-  plot(0, xlim = c(1,n.mrk), ylim = c(1,36), type = "n", 
-       axes = F, xlab = "", ylab = "")
+z<-round(genoprob$probs[,,ind], 1)
+system("rm *.png")
+png(file="example%03d.png", width=1400, heigh=700)
+cte <- 0
+for(a in c(0.4972222, 0.15, rep(10,15)^-c(1:15))){
+  a1<-0.5-a
+  z1<-z
+  #z1[]<-0.51
+  z1[z1 == 0] <- a/34
+  z1[z1 == 0.5] <- a1
+  #par(bg = "black")
+  plot(-0.5, xlim = c(1,n.mrk), ylim = c(1,36), type = "n", 
+       axes = F, xlab = "", ylab = "", 
+       main = paste0("EM iteration = ", cte),cex.main = 2.5)
   for(k in 1:(n.mrk-1)){
     for(i in 1:36){
       for(j in 1:36){
         lines(x = c(k,k+1), y = c(i,j), 
               lwd = ifelse((I[i,k] == g[k, ind] &
-                            I[j,k+1] == g[k+1, ind]), 1, 0) * (z1[i,k] + z1[j,k+1])) 
+                              I[j,k+1] == g[k+1, ind]), 3, 0) * 1/abs(log(z1[i,k] * z1[j,k+1])), 
+              col = "black") 
         #lwd = .2)
         #lwd = genoprob$probs[i,k,ind] * genoprob$probs[j,k+1,ind] * 3)
       }
@@ -134,11 +150,43 @@ z1[z1 == 0.5] <- 0.45
     points(rep(k,36), 1:36 ,
            pch = 19,
            #col = "red", cex = 2)
-           col = ifelse(I[,k]==g[k, ind], "#e41a1c", "lightgray"), cex = 1)
-    points(rep(k,36), 1:36 ,
-           #col = "red", cex = 2)
-           pch = ifelse(I[,k]==g[k, ind], 1, 4), cex = 1)
+           col = ifelse(I[,k]==g[k, ind], "#e41a1c", "darkgray"), cex = 1)
+    
   }
+  text(x = rep(0.7,36), y = 1:36, labels = dimnames(z)[[1]], cex = 1.2)
+  text(x = 1:15, y= rep(36.8, 15), labels = paste0("M",1:15))
+  
+  cte<-cte +1
+}
+dev.off()
+system("convert -delay 30 *.png animated_hmm.gif")
 
-
+png(file="fig0.png", width=1400, heigh=700)
+plot(-0.5, xlim = c(1,n.mrk), ylim = c(1,36), type = "n", 
+     axes = F, xlab = "", ylab = "", 
+     #main = paste0("EM iteration = ", cte),cex.main = 2.5)
+     main = "Initial states", cex.main = 2)
+for(k in 1:(n.mrk-1)){
+  for(i in 1:36){
+    for(j in 1:36){
+      lines(x = c(k,k+1), y = c(i,j), 
+            lwd = ifelse((I[i,k] == g[k, ind] &
+                            I[j,k+1] == g[k+1, ind]), 0.5, 0), #* 
+            #1/abs(log(z1[i,k] * z1[j,k+1])), 
+            col = "black") 
+      #lwd = .2)
+      #lwd = genoprob$probs[i,k,ind] * genoprob$probs[j,k+1,ind] * 3)
+    }
+  }
+}
+for(k in 1:n.mrk){
+  points(rep(k,36), 1:36 ,
+         pch = 19,
+         #col = "red", cex = 2)
+         col = ifelse(I[,k]==g[k, ind], "#e41a1c", "darkgray"), cex = 1)
+  
+}
+text(x = rep(0.7,36), y = 1:36, labels = dimnames(z)[[1]], cex = 1.2)
+text(x = 1:15, y= rep(36.8, 15), labels = paste0("M",1:15))
+dev.off()
 
