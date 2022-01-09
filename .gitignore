@@ -4,7 +4,7 @@
 # Session Data files
 .RData
 # All rda data files
-*.rda
+#*.rda
 # All rds data files
 *.rds
 # Rmarkdown files
