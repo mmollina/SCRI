@@ -7,8 +7,8 @@
 
 ### 2022 - MAPpoly update
 
- - [Slides](https://github.com/mmollina/SCRI/blob/main/docs/SCRI_MAPpoly_training.pptx)
- - [Tetraploid scripts](https://github.com/mmollina/SCRI/tree/main/MAPpoly/tetra)
+ - [Slides](https://github.com/mmollina/SCRI/blob/main/docs/MAPpoly_updates.pptx)
+ - [Tetraploid scripts](https://github.com/mmollina/SCRI/tree/docs/tetra/mappoly_intro.md)
 
 ### 2021 - Workshop material
 
