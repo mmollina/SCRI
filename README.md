@@ -7,10 +7,14 @@
 
 ---
 
-### 2022 - MAPpoly update
+### 2022 - Workshop material
 
- - [Slides](https://github.com/mmollina/SCRI/raw/main/docs/MAPPoly_updates.pptx)
- - [Introduction script to MAPpoly](https://github.com/mmollina/SCRI/blob/main/docs/tetra/mappoly_intro.md)
+ #### MAPpoly updates
+
+  - [Slides](https://github.com/mmollina/SCRI/raw/main/docs/MAPPoly_updates.pptx)
+  - [Introduction script to MAPpoly](https://github.com/mmollina/SCRI/blob/main/docs/tetra/mappoly_intro.md)
+ 
+ #### QTLpoly updates
 
 ---
 
