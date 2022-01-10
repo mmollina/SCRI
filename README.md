@@ -5,10 +5,14 @@
     <br>
 </p>
 
+---
+
 ### 2022 - MAPpoly update
 
  - [Slides](https://github.com/mmollina/SCRI/raw/main/docs/MAPPoly_updates.pptx)
  - [Introduction script to MAPpoly](https://github.com/mmollina/SCRI/blob/main/docs/tetra/mappoly_intro.md)
+
+---
 
 ### 2021 - Workshop material
 
@@ -29,3 +33,4 @@
  - [Tetraploid vignette](https://rpubs.com/mmollin/tetra_mappoly_vignette)
  - [Hexaploid scripts](https://github.com/mmollina/SCRI/tree/main/MAPpoly/hexa)
  
+ ---
