@@ -40,6 +40,7 @@ score.null = null_model(data = data.sim$results, pheno.col = 1, n.clusters = 1)
 ## Running REMIM analysis
 remim.mod = remim(data = data, pheno.col = 1, w.size = 20, sig.fwd = 0.20, sig.bwd = 0.05, score.null = score.null, d.sint = 1.5, n.clusters = 1)
 print(remim.mod)
+plot_profile(data, remim.mod)
 
 ## Fitting final models with detected QTL
 fitted.mod = fit_model(data = data, model = remim.mod, probs = "joint", polygenes = "none")
@@ -47,6 +48,7 @@ summary(fitted.mod)
 
 ## Estimating allele effects
 est.effects = qtl_effects(ploidy = 4, fitted = fitted.mod)
+plot(est.effects)
 
 ## Saving results for VIEWpoly
 save(data, file = "QTLpoly_data.RData")
