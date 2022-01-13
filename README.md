@@ -7,16 +7,13 @@
 
 ---
 
-### 2022 - Workshop material
+### 2022 - MAPpoly and QTLpoly update
 
- #### MAPpoly updates
-
-  - [Slides](https://github.com/mmollina/SCRI/raw/main/docs/MAPPoly_updates.pptx)
-  - [Introduction script to MAPpoly](https://github.com/mmollina/SCRI/blob/main/docs/tetra/mappoly_intro.md)
- 
- #### QTLpoly updates
+ - [MAPpoly and QTLpoly Slides](https://github.com/mmollina/SCRI/raw/main/docs/MAPPoly_QTLpolyupdates.pptx)
+ - [Introduction script to MAPpoly](https://github.com/mmollina/SCRI/blob/main/docs/tetra/mappoly_intro.md)
 
 ---
+
 
 ### 2021 - Workshop material
 
@@ -26,6 +23,7 @@
   - Ploidy estimation in a sugarcane biparental population - [Scripts](https://github.com/mmollina/SCRI/tree/main/supermassa_vcf2sm/ploidy_estimation)
   - Genotype calling in a sweetpotato biparental population using VCF2SM - [Scripts](https://github.com/mmollina/SCRI/tree/main/supermassa_vcf2sm/genotype_calling])
 
+---
 #### Overview - Linkage maps and haplotype reconstruction
 
  - [Slides](https://github.com/mmollina/SCRI/blob/main/docs/SCRI_linkage_and%20phasing.pptx)
@@ -37,4 +35,3 @@
  - [Tetraploid vignette](https://rpubs.com/mmollin/tetra_mappoly_vignette)
  - [Hexaploid scripts](https://github.com/mmollina/SCRI/tree/main/MAPpoly/hexa)
  
- ---
