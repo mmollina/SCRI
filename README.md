@@ -10,7 +10,7 @@
 ### 2022 - MAPpoly and QTLpoly update
 
  - [MAPpoly and QTLpoly Slides](https://github.com/mmollina/SCRI/raw/main/docs/MAPPoly_QTLpolyupdates.pptx)
- - [Introduction script to MAPpoly](https://github.com/mmollina/SCRI/blob/main/docs/tetra/mappoly_intro.md)
+ - [Introduction to MAPpoly - plain script](https://github.com/mmollina/SCRI/blob/main/docs/tetra/mappoly_intro.md)
 
 ---
 
