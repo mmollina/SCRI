@@ -12,7 +12,7 @@ solcap.snp.pos$ch[solcap.snp.pos$ch == 0] <- NA
 solcap.snp.pos <- solcap.snp.pos[order(solcap.snp.pos[,"ch"],solcap.snp.pos[,"start"],decreasing=FALSE),]
 solcap.snp.pos <- data.frame(chr = solcap.snp.pos$ch, pos = solcap.snp.pos$start, row.names = solcap.snp.pos$snp.names)
 head(solcap.snp.pos)
-write.csv(solcap.snp.pos, file = "~/repos/SCRI/data/solcap_snp_pos_V4.03.csv")
+## write.csv(solcap.snp.pos, file = "~/repos/SCRI/data/solcap_snp_pos_V4.03.csv")
 
 ## Including genome position (using S. tuberosum genome v4.03)
 solcap.snp.pos <- read.csv("https://github.com/mmollina/SCRI/raw/main/data/solcap_snp_pos_V4.03.csv", 

@@ -52,6 +52,8 @@ s
 class(s)
 plot(s)
 
+print(dat)
+
 s1_30 <- make_seq_mappoly(dat, 1:30)
 s1_30
 plot(s1_30)
