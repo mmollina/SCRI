@@ -1,7 +1,7 @@
 Introduction to MAPpoly 0.3.0
 ================
 Marcelo Mollinari
-2022-01-09
+2022-01-12
 
 ``` r
 library(mappoly)
@@ -54,11 +54,12 @@ plot(g)
 g
 ```
 
-### Phasing
+### Ordering and Phasing
 
 ``` r
+id <- as.numeric(colnames(g$seq.vs.grouped.snp)[-13])
 MAPs <- vector("list", 12)
-for(i in 1:12){
+for(i in id){
   s <- make_seq_mappoly(g, i, genomic.info = 1) 
   tpt <- est_pairwise_rf(s, ncpus = ncores)
   gen.o <- get_genomic_order(s) ## Using genomic order
@@ -66,8 +67,10 @@ for(i in 1:12){
   MAPs[[i]] <- est_rf_hmm_sequential(s.gen,twopt = tpt, 
                                      sub.map.size.diff.limit = 5, 
                                      extend.tail = 200)
+  MAPs[[i]]$info$chrom <- rep(paste0("ST4.03ch", stringr::str_pad(i, 2, pad = "0")),
+                               MAPs[[i]]$info$n.mrk)
 }
-plot_map_list(MAPs)
+plot_map_list(MAPs, horiz = FALSE, col = "ggstyle")
 ```
 
 ### Updating map distances
@@ -76,7 +79,7 @@ plot_map_list(MAPs)
 MAPs.up <- vector("list", 12)
 for(i in 1:12)
   MAPs.up[[i]] <- est_full_hmm_with_global_error(MAPs[[i]], error = 0.05)
-plot_map_list(MAPs.up)
+plot_map_list(MAPs.up, horiz = FALSE, col = "ggstyle")
 ```
 
 ### Plot map vs. genome
@@ -99,12 +102,6 @@ geno.prob <- lapply(MAPs.up, calc_genoprob_error, error = 0.05)
 h <- calc_homologprob(geno.prob)
 plot(h, lg = 3, ind = 12)
 plot(h, lg = c(1,3,5,7), ind = 12)
-```
-
-### Export to QTLpoly
-
-``` r
-QTLpoly.probs <- export_qtlpoly(geno.prob)
 ```
 
 ### Preferential pairing profiles
