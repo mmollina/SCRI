@@ -28,7 +28,7 @@
 
  - [Slides](https://github.com/mmollina/SCRI/blob/main/docs/SCRI_linkage_and%20phasing.pptx)
 
-#### Construction of genetic maps in poluploids using MAPpoly
+#### Construction of genetic maps in polyploids using MAPpoly
 
  - [Slides](https://github.com/mmollina/SCRI/blob/main/docs/SCRI_MAPpoly_training.pptx)
  - [Tetraploid scripts](https://github.com/mmollina/SCRI/tree/main/MAPpoly/tetra)
