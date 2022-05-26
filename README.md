@@ -26,7 +26,7 @@
 ---
 #### Overview - Linkage maps and haplotype reconstruction
 
- - [Slides](https://github.com/mmollina/SCRI/blob/main/docs/SCRI_linkage_and%20phasing.pptx)
+ - [Slides](https://github.com/mmollina/SCRI/blob/main/docs/SCRI_linkage_and_phasing.pptx)
 
 #### Construction of genetic maps in polyploids using MAPpoly
 
