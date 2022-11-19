@@ -19,7 +19,7 @@ plot(dat)
 ### Data quality control
 
 ``` r
-dat <- filter_individuals(dat, ind.to.remove = c("B2721.026", "B2721.078"))
+dat <- filter_individuals(dat)
 dat <- filter_missing(dat, type = "marker", filter.thres = .05)
 dat <- filter_missing(dat, type = "individual", filter.thres = .05)
 seq.filt <- filter_segregation(dat, chisq.pval.thres = 0.05/dat$n.mrk)
