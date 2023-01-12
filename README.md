@@ -8,7 +8,7 @@
 
 ### 2023 - MAPpoly and QTLpoly update
 
- - [MAPpoly and QTLpoly Slides](https://github.com/mmollina/SCRI/raw/main/Updates-MAPpoly-QTLpoly-2023-meeting.pptx)
+ - [MAPpoly and QTLpoly Slides](https://github.com/mmollina/SCRI/raw/main/docs/Updates-MAPpoly-QTLpoly-2023-meeting.pptx)
  - [Cpp code for multiparental-multiploiody-multiallelic map building](https://github.com/mmollina/MAPpoly/blob/multi_hmm_cpp/src/est_multi_hmm_map.cpp)
 ---
 
