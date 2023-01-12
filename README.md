@@ -1,7 +1,6 @@
 <p align="center">
   <h1 align="center">Tools for Genomic Assisted Breeding of Polyploid Crops</h1>
    <h4 align="center">Virtual Project Meeting and Training Workshop</h4>
-   <h4 align="center">Marcelo Mollinari - Jan 13, 2022</h4>
     <br>
 </p>
 
