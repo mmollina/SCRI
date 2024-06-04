@@ -17,10 +17,8 @@ head(solcap.snp.pos)
 ## Including genome position (using S. tuberosum genome v4.03)
 solcap.snp.pos <- read.csv("https://github.com/mmollina/SCRI/raw/main/data/solcap_snp_pos_V4.03.csv", 
                            row.names = 1)
-dat$sequence <- solcap.snp.pos[dat$mrk.names, "chr"]
-dat$sequence.pos <- solcap.snp.pos[dat$mrk.names,"pos"]
-names(dat$sequence.pos) <- names(dat$sequence) <- dat$mrk.names
-dat$elim.correspondence$sequence <- solcap.snp.pos[dat$elim.correspondence$elim, "chr"]
-dat$elim.correspondence$sequence.pos <- solcap.snp.pos[dat$elim.correspondence$elim, "pos"]
-
-
+dat$chrom <- solcap.snp.pos[dat$mrk.names, "chr"]
+dat$genome.pos <- solcap.snp.pos[dat$mrk.names,"pos"]
+names(dat$genome.pos) <- names(dat$chrom) <- dat$mrk.names
+dat$elim.correspondence$chrom <- solcap.snp.pos[dat$elim.correspondence$elim, "chr"]
+dat$elim.correspondence$genome.pos <- solcap.snp.pos[dat$elim.correspondence$elim, "pos"]
